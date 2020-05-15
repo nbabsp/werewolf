@@ -1,0 +1,11 @@
+.timer {
+    display: block;
+    height: 50%;
+    border-width: 1px;
+    border-color: #000000;
+    border-bottom-style: solid;
+    border-right-style: solid;
+    box-sizing: border-box;
+    padding-top: 8%;
+    font-size: 40px;
+}

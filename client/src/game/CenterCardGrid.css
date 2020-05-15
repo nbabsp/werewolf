@@ -1,0 +1,17 @@
+.centerCardGrid {
+    background-color: #444444;
+    width: 480px;
+    height: 157px;
+    margin: auto;
+    display: flex;
+    padding-left: 25px;
+    padding-right: 25px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    box-sizing: border-box;
+    justify-content: space-between;
+}
+.centerCard {
+    display: inline-block;
+    margin: auto;    
+}

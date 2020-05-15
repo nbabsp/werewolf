@@ -1,0 +1,14 @@
+.playerGrid {
+    background-color: #777777;
+    display: block;
+    width: 480px;
+    margin: auto;
+}
+.nameLabel {
+    width: 100px;
+    height: 20px;
+    background-color: #36393E;
+    color: #FFFFFF;
+    display: block;
+    text-align: center;
+}
