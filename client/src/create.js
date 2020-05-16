@@ -1,7 +1,7 @@
 import Requestor from './common/Requestor'
 import InputPopover from './common/InputPopover'
-import LobbyView from './manager/LobbyView'
 import ManageGamePopover from './manager/ManageGamePopover'
+import './manager/ManagerLobby'
 
 let host = 'localhost'
 let port = 9615
@@ -23,13 +23,14 @@ async function waitP(sec) {
 
 async function manageLobbyP(gameId) {
     let started = false
-    let lobby = new LobbyView(() => started = true)
-    document.body.appendChild(lobby.element)
+    let lobby = document.createElement('manager-lobby')
+    lobby.startCallback = () => started = true
+    document.body.appendChild(lobby)
     while(!started) {
         lobby.players = await ManagerRequestor.playersP(gameId)
         await waitP(1)
     }
-    lobby.element.remove()
+    lobby.remove()
 }
 
 async function manageGameP(gameId) {
