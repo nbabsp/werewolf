@@ -3,7 +3,7 @@ import InputPopover from './common/InputPopover'
 import GameFactory from './game/GameFactory'
 import GameMaster from './game/GameMaster'
 import GameView from './game/GameView'
-import GameLobbyView from './game/GameLobbyView'
+import './components/BaseLobby'
 import './join.css'
 
 let host = 'localhost'
@@ -28,12 +28,12 @@ async function findGameP() {
 }
 
 async function waitInLobbyP(gameId) {
-    let lobby = new GameLobbyView()
-    document.body.appendChild(lobby.element)
+    let lobby = document.createElement('base-lobby')
+    document.body.appendChild(lobby)
     await PlayerRequestor.waitForStartP(gameId, async () => {
         lobby.players = await PlayerRequestor.playersP(gameId)
     })
-    lobby.element.remove()
+    lobby.remove()
 }
 
 async function playP(playerId) {
