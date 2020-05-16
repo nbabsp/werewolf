@@ -1,5 +1,6 @@
 import Timer from "./Timer";
 import './LowerBox.css'
+import './BaseCard.js'
 
 class LowerBox {
     constructor() {
@@ -28,7 +29,9 @@ class LowerBox {
     set description(description) {
         this._description.nodeValue = description
     }
-    set card(card) {
+    set role(role) {
+        let card = document.createElement('base-card')
+        card.role = role
         this.myCardWrapper.appendChild(card)
     }
     set time(time) {

@@ -1,7 +1,6 @@
 import PlayerGrid from './PlayerGrid'
 import CenterCardGrid from './CenterCardGrid'
 import LowerBox from './LowerBox'
-import CardView from './CardView'
 
 let descriptions = {
     werewolf: 'Look for other Werewolves',
@@ -30,10 +29,7 @@ class GameView {
         this.element = main
 
         this.lowerBox.description = descriptions[game.player.startRole]
-        let myCard = new CardView(100)
-        console.log(game.player)
-        myCard.role = game.player.startRole
-        this.lowerBox.card = myCard.element
+        this.lowerBox.role = game.player.startRole
 
         game.observeTime((time) => this.lowerBox.time = time)
     }

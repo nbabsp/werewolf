@@ -1,5 +1,5 @@
 import './CenterCardGrid.css'
-import CardView from './CardView'
+import './BaseCard'
 
 let host = 'http://localhost:9615'
 
@@ -12,25 +12,25 @@ class CardGrid {
         let wrapper = document.createElement('div')
         wrapper.className = 'centerCard'
         wrapper.onclick = () => interaction.onClick('left')
-        let leftCardView = new CardView(100)
-        game.observeRole('left', (role) => leftCardView.role = role)
-        wrapper.appendChild(leftCardView.element)
+        let leftCard = document.createElement('base-card')
+        game.observeRole('left', (role) => leftCard.role = role)
+        wrapper.appendChild(leftCard)
         this.element.appendChild(wrapper)
 
         wrapper = document.createElement('div')
         wrapper.className = 'centerCard'
         wrapper.onclick = () => interaction.onClick('center')
-        let centerCardView = new CardView(100)
-        game.observeRole('center', (role) => centerCardView.role = role)
-        wrapper.appendChild(centerCardView.element)
+        let centerCard = document.createElement('base-card')
+        game.observeRole('center', (role) => centerCard.role = role)
+        wrapper.appendChild(centerCard)
         this.element.appendChild(wrapper)
 
         wrapper = document.createElement('div')
         wrapper.className = 'centerCard'
         wrapper.onclick = () => interaction.onClick('right')
-        let rightCardView = new CardView(100)
-        game.observeRole('right', (role) => rightCardView.role = role)
-        wrapper.appendChild(rightCardView.element)
+        let rightCard = document.createElement('base-card')
+        game.observeRole('right', (role) => rightCard.role = role)
+        wrapper.appendChild(rightCard)
         this.element.appendChild(wrapper)
     }
 }

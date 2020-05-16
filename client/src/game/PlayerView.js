@@ -1,4 +1,5 @@
-import CardView from './CardView'
+import './BaseCard'
+import './LowerBox.css'
 
 class PlayerView {
     constructor(name, onClick) {
@@ -7,10 +8,11 @@ class PlayerView {
         this.element.style.margin = '10px'
         this.element.onclick = onClick
         this._cardWrapper = document.createElement('div')
+        this._cardWrapper.className = 'playerCardWrapper'
         this._cardWrapper.style.paddingBottom = '3px'
 
-        this.cardView = new CardView(100)
-        this._cardWrapper.appendChild(this.cardView.element)
+        this.card = document.createElement('base-card')
+        this._cardWrapper.appendChild(this.card)
 
         let text = document.createElement('div')
         text.className = 'nameLabel'
@@ -21,7 +23,7 @@ class PlayerView {
     }
 
     set role(role) {
-        this.cardView.role = role
+        this.card.role = role
     }
 }
 
