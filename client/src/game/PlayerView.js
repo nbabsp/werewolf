@@ -1,5 +1,5 @@
 import './BaseCard'
-import './LowerBox.css'
+import './PlayerView.css'
 
 class PlayerView {
     constructor(name, onClick) {

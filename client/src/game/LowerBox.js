@@ -1,41 +1,65 @@
-import Timer from "./Timer";
-import './LowerBox.css'
+import { LitElement, html, css} from 'lit-element'
 import './BaseCard.js'
+import './DescriptoinBox.js'
+import './CountDownTimer'
 
-class LowerBox {
+class LowerBox extends LitElement {
+    static get properties() {
+        return {
+            role: { type: String },
+            time: { type: Number }
+        }
+    }
+
+    static get styles() {
+        return css`
+        :host {
+            display: block;
+            margin: auto;
+            width: 480px;
+            height: 157px;
+        }
+        .infoBox {
+            background-color: #555555;
+            color: #FFFFFF;
+            display: inline-block;
+            position: relative;
+            text-align: center;
+            width: 360px;
+            height: 100%;
+            vertical-align: top;
+        }
+        .myCardWrapper {
+            background-color: #555555;
+            display: inline-block;
+            margin: auto;
+            padding: 10px;
+            height: 157px;
+            width: 120px;
+            border-width: 1px;
+            border-color: #000000;
+            border-left-style: solid;
+            box-sizing: border-box;
+        }    
+        `
+    }
+
     constructor() {
-        this.element = document.createElement('div')
-        this.element.className = 'lowerBox'
-    
-        let infoBox = document.createElement('div')
-        infoBox.className = 'infoBox'
-    
-        this.timer = new Timer()
-    
-        let descriptionBox = document.createElement('div')
-        descriptionBox.className = 'description'
-        this._description = document.createTextNode('')
-        descriptionBox.appendChild(this._description)
-        
-        this.myCardWrapper = document.createElement('div')
-        this.myCardWrapper.className = 'myCardWrapper'
-    
-        infoBox.appendChild(this.timer.element)
-        infoBox.appendChild(descriptionBox)
-    
-        this.element.appendChild(infoBox)
-        this.element.appendChild(this.myCardWrapper)
+        super()
+        this.role = null
+        this.time = null
     }
-    set description(description) {
-        this._description.nodeValue = description
-    }
-    set role(role) {
-        let card = document.createElement('base-card')
-        card.role = role
-        this.myCardWrapper.appendChild(card)
-    }
-    set time(time) {
-        this.timer.time = time
+
+    render() {
+        return html`
+            <div class='infoBox'>
+                <count-down-timer time=${ this.time }></count-down-timer>
+                <description-box role=${ this.role }></description-box>
+            </div><div class='myCardWrapper'>
+                        <base-card role=${ this.role }></base-card>
+                  </div>
+        `
     }
 }
-export default LowerBox
+
+customElements.define('lower-box', LowerBox)
