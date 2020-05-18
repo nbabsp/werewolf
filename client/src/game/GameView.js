@@ -1,6 +1,7 @@
 import PlayerGrid from './PlayerGrid'
 import CenterCardGrid from './CenterCardGrid'
 import './LowerBox'
+import './GameView.css'
 
 class GameView {
     constructor(game, interaction) {
