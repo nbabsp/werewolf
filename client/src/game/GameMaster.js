@@ -25,18 +25,36 @@ class GameHandler {
     constructor(game) {
         this._game = game
         this._player = game.player
+        this._status = 'unknown'
+    }
+
+    _exposeStartRole(id) {
+        if (id == 'left' || id == 'center' || id == 'right') {
+            this._game.setRole(id, this._game.center[id])
+        }
+        else {
+            let player = this._game.players.find(player => player.id == id)
+            this._game.setRole(player.id, player.startRole)
+        }
+    }
+
+    _hideRole(id) {
+        this._game.setRole(id, null)
     }
 
     onClick(id) {
-        if (id == 'left' || id == 'center' || id == 'right') {
-            console.log('clicked center card', id)
-            this._game.setRole(id, this._game.center[id])
-            return
+        switch (this._status) {
+            case 'night':
+                this._nightClick(id)
+                break
+            case 'day':
+                this._dayClick(id)
+                break
         }
-        console.log('got a click', id)
-        let player = this._game.players.find(player => player.id == id)
-        this._game.setRole(player.id, player.startRole)
     }
+
+    _nightClick(id) {}
+    _dayClick(id) {}
 
     async timerP(duration) {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
@@ -52,8 +70,10 @@ class GameHandler {
     async playP() {
         await this.timerP(5) // give players a chance to internalize their card
         console.log('night!')
+        this._status = 'night'
         this._startNightP()
         await this.timerP(5) // give players a chance to perform their action
+        this._status = 'day'
         console.log('day!')
         this._endNightP()
     }
@@ -66,44 +86,26 @@ class GameHandlerWerewolf extends GameHandler {
     constructor(game) {
         super(game)
         this._werewolfIds = []
-        this._clicked = null
+        this._loneWolf = false
+        this._peekedId = null
+    }
+
+    _nightClick(id) {
+        if (this._loneWolf && !this._peekedId && this._game.center[id]) {
+            this._peekedId = id
+            this._exposeStartRole(id)
+        }
     }
 
     async _startNightP() {
         this._werewolfIds = await GameMasterRequestor.werewolfP(this._game.id, this._player.id)
-        this._werewolfIds.forEach(playerId => this._game.setRole(playerId, 'werewolf'))
+        this._werewolfIds.forEach(id => this._exposeStartRole(id))
+        this._loneWolf = this._werewolfIds.length == 1
     }
-
-    async _clickable(id) {
-        this._werewolfIds = await GameMasterRequestor.werewolfP(this._game.id, this._player.id)
-        let status = await GameMasterRequestor.statusP(this._game.id)
-        console.log(this._werewolfIds.length == 2)
-        console.log(status.status == 'night')
-        console.log(this._clicked == null)
-        console.log((id == 'left' || id == 'center' || id == 'right'))
-        console.log(this._werewolfIds.length == 2 && status.status == 'night' && this._clicked == null && (id == 'left' || id == 'center' || id == 'right'))
-
-        if (this._werewolfIds.length == 2 && status.status == 'night' && this._clicked == null && (id == 'left' || id == 'center' || id == 'right')) {
-            return true
-        }
-        return false
-    }
-    
-    async onClick(id) {
-        if(await this._clickable(id)) {
-            this._clicked = id
-            this._clicked = this._game.setRole(id, this._game.center[id])
-        }
-    }
-
 
     async _endNightP() {
-        this._werewolfIds.forEach(playerId => this._game.setRole(playerId, null))
-        console.log('before')
-        if(this._clicked != null) {
-            console.log('after')
-            this.game.setRole(this._clicked, null)
-        }
+        this._werewolfIds.forEach(id => this._hideRole(id))
+        if (this._peekedId) this._hideRole(this._peekedId)
     }
 }
 
