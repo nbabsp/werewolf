@@ -24,13 +24,18 @@ class PlayerGrid extends LitElement {
         this.players = []
     }
 
-    handleClick(event) {
+    exposePlayer(id, role) {
+        let basePlayer = this.shadowRoot.getElementById(id)
+        basePlayer.role = role
+    }
+
+    playerClicked(event) {
         this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
     }
 
     render() {
         return html`
-            <div>${this.players.map(player => html`<base-player .player=${ player } @clicked=${ this.handleClick }/>`)}</div>
+            <div>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
         `
     }
 }

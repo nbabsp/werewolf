@@ -1,9 +1,6 @@
 import './CenterCardGrid.css'
 import './BaseCard'
 
-let host = 'http://localhost:9615'
-
-
 class CardGrid {
     constructor(game, interaction) {
         this.element = document.createElement('div')

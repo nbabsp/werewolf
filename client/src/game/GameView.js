@@ -9,9 +9,8 @@ class GameView {
         main.className = 'main'
         this.playerGrid = document.createElement('player-grid')
         this.playerGrid.players = game.players
-        this.playerGrid.addEventListener('clicked', (event) => console.log('clicked player:', event.detail))
-        // need to handle disclosing players: playerView.onClick = () => interaction.onClick(player.id)
-        // need to handle disclosing players: game.observeRole(player.id, (role) => playerView.role = role ? role : 'back')
+        this.playerGrid.addEventListener('clicked', event => interaction.onClick(event.detail))
+        game.players.forEach(player => game.observeRole(player.id, role => this.playerGrid.exposePlayer(player.id, role)))
         this.centerCardGrid = new CenterCardGrid(game, interaction)
         this.lowerBox = document.createElement('lower-box')
 

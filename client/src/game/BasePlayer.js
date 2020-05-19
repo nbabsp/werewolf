@@ -49,7 +49,7 @@ class BasePlayer extends LitElement {
         return html`
             <div id='basePlayer'>
                 <div class='cardWrapper'>
-                    <base-card .role=${ this.player.role } @clicked=${ this.handleClick }></base-card>
+                    <base-card .role=${ this.role } @clicked=${ this.handleClick }></base-card>
                 </div>
                 <div class='name'>${ this.player.name }</div>
             </div>
