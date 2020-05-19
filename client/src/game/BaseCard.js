@@ -23,12 +23,12 @@ class BaseCard extends LitElement {
 
     constructor() {
         super()
-        this.role = null
+        this.role = 'back'
     }
 
     render() {
         return html`
-            <img src=${ `${host}/WerewolfImages/Werewolf/${this.role || 'back'}.png` }></img>
+            <img src=${ `${ host }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
         `
     }
 }

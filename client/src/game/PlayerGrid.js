@@ -1,5 +1,5 @@
 import './PlayerGrid.css'
-import PlayerView from './PlayerView'
+import './BasePlayer.js'
 
 class PlayerGrid {
     constructor(game, interaction) {
@@ -7,10 +7,13 @@ class PlayerGrid {
         this.element.className = 'playerGrid'
         this._gridWrapper = document.createElement('div')
         game.players.forEach((player) => {
-            let playerView = new PlayerView(player.name, () => interaction.onClick(player.id))
-            this._gridWrapper.appendChild(playerView.element)
-            game.observeRole(player.id, (role) => playerView.role = role)
-        })
+
+            let playerView = document.createElement('base-player')
+            playerView.name = player.name
+            playerView.onClick = () => interaction.onClick(player.id)
+            this._gridWrapper.appendChild(playerView)
+            game.observeRole(player.id, (role) => playerView.role = role ? role : 'back')
+            })
         this.element.appendChild(this._gridWrapper)
     }
 }
