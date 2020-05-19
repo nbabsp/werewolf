@@ -1,21 +1,38 @@
-import './PlayerGrid.css'
-import './BasePlayer.js'
+import { LitElement, html, css} from 'lit-element'
+import './BasePlayer'
 
-class PlayerGrid {
-    constructor(game, interaction) {
-        this.element = document.createElement('div')
-        this.element.className = 'playerGrid'
-        this._gridWrapper = document.createElement('div')
-        game.players.forEach((player) => {
+class PlayerGrid extends LitElement {
+    static get properties() {
+        return {
+            players: { type: Array }
+        }
+    }
 
-            let playerView = document.createElement('base-player')
-            playerView.name = player.name
-            playerView.onClick = () => interaction.onClick(player.id)
-            this._gridWrapper.appendChild(playerView)
-            game.observeRole(player.id, (role) => playerView.role = role ? role : 'back')
-            })
-        this.element.appendChild(this._gridWrapper)
+    static get styles() {
+        return css`
+        :host {
+            background-color: #777777;
+            display: block;
+            width: 480px;
+            margin: auto;
+        }
+        `
+    }
+
+    constructor() {
+        super()
+        this.players = []
+    }
+
+    handleClick(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
+    }
+
+    render() {
+        return html`
+            <div>${this.players.map(player => html`<base-player .player=${ player } @clicked=${ this.handleClick }/>`)}</div>
+        `
     }
 }
 
-export default PlayerGrid
+customElements.define('player-grid', PlayerGrid)

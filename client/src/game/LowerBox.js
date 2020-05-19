@@ -56,7 +56,7 @@ class LowerBox extends LitElement {
                 <count-down-timer time=${ this.time }></count-down-timer>
                 <description-box role=${ this.role }></description-box>
             </div><div class='myCardWrapper'>
-                        <base-card role=${ this.role }></base-card>
+                        <base-card .role=${ this.role }></base-card>
                   </div>
         `
     }

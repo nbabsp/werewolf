@@ -23,12 +23,16 @@ class BaseCard extends LitElement {
 
     constructor() {
         super()
-        this.role = 'back'
+        this.role = null
+    }
+
+    handleClick(event) {
+        this.dispatchEvent(new Event('clicked'))
     }
 
     render() {
         return html`
-            <img src=${ `${ host }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
+            <img @click=${ this.handleClick } src=${ `${ host }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
         `
     }
 }
