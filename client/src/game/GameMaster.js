@@ -26,6 +26,7 @@ class GameHandler {
         this._game = game
         this._player = game.player
         this._status = 'unknown'
+        this._voteId = null
     }
 
     _exposeStartRole(id) {
@@ -54,7 +55,14 @@ class GameHandler {
     }
 
     _nightClick(id) {}
-    _dayClick(id) {}
+    _dayClick(id) {
+        if (this._player.id == id) return
+        let player = this._game.players.find(player => player.id == id)
+        if (!player || id == this._voteId) return
+        if (this._voteId) this._game.setRole(this._voteId, null)
+        this._game.setRole(id, 'selected')
+        this._voteId = id
+    }
 
     async timerP(duration) {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
@@ -68,13 +76,21 @@ class GameHandler {
     }
 
     async playP() {
-        await this.timerP(5) // give players a chance to internalize their card
+        await this.timerP(0) // give players a chance to internalize their card
         console.log('night!')
         this._status = 'night'
         this._startNightP()
-        await this.timerP(5) // give players a chance to perform their action
+        await this.timerP(0) // give players a chance to perform their action
         this._status = 'day'
         console.log('day!')
+        
+        let arr = this._game.players.filter(p => p.id != this._player.id)
+        if (arr.length > 0) {
+            let id = arr[Math.floor(Math.random() * arr.length)].id
+            this._game.setRole(id, 'selected')
+            this._voteId = id
+        }
+        
         this._endNightP()
     }
 

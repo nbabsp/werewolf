@@ -1,35 +1,52 @@
 import './CenterCardGrid.css'
 import './BaseCard'
+import { LitElement, html, css} from 'lit-element'
+import './BasePlayer'
 
-class CardGrid {
-    constructor(game, interaction) {
-        this.element = document.createElement('div')
-        this.element.className = 'centerCardGrid'
+class CenterCardGrid extends LitElement {
+    static get properties() {
+        return {
+        }
+    }
 
-        let wrapper = document.createElement('div')
-        wrapper.className = 'centerCard'
-        wrapper.onclick = () => interaction.onClick('left')
-        let leftCard = document.createElement('base-card')
-        game.observeRole('left', (role) => leftCard.role = role)
-        wrapper.appendChild(leftCard)
-        this.element.appendChild(wrapper)
+    static get styles() {
+        return css`
+        :host {
+            background-color: #444444;
+            width: 480px;
+            height: 157px;
+            margin: auto;
+            display: flex;
+            padding-left: 45px;
+            padding-right: 45px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            box-sizing: border-box;
+            justify-content: space-between;
+        }
+        `
+    }
 
-        wrapper = document.createElement('div')
-        wrapper.className = 'centerCard'
-        wrapper.onclick = () => interaction.onClick('center')
-        let centerCard = document.createElement('base-card')
-        game.observeRole('center', (role) => centerCard.role = role)
-        wrapper.appendChild(centerCard)
-        this.element.appendChild(wrapper)
+    constructor() {
+        super()
+    }
 
-        wrapper = document.createElement('div')
-        wrapper.className = 'centerCard'
-        wrapper.onclick = () => interaction.onClick('right')
-        let rightCard = document.createElement('base-card')
-        game.observeRole('right', (role) => rightCard.role = role)
-        wrapper.appendChild(rightCard)
-        this.element.appendChild(wrapper)
+    exposeCard(id, role) {
+        let baseCard = this.shadowRoot.getElementById(id)
+        baseCard.role = role
+    }
+
+    cardClicked(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
+    }
+
+    render() {
+        return html`
+            <div><base-card id=left @clicked=${ this.cardClicked }/></div>
+            <div><base-card id=center @clicked=${ this.cardClicked }/></div>
+            <div><base-card id=right @clicked=${ this.cardClicked }/></div>
+        `
     }
 }
 
-export default CardGrid
+customElements.define('center-card-grid', CenterCardGrid)

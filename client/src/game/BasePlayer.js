@@ -16,17 +16,10 @@ class BasePlayer extends LitElement {
             margin: 10px;
         }
 
-        .cardWrapper {
-            background-color: #777777;
-            display: block;
-            margin: auto;
-            height: 157px;
-            width: 100px;
-        }
-
         .name {
             width: 100px;
             height: 20px;
+            margin-top: 5px;
             background-color: #36393E;
             color: #FFFFFF;
             display: block;
@@ -48,9 +41,7 @@ class BasePlayer extends LitElement {
     render() {
         return html`
             <div id='basePlayer'>
-                <div class='cardWrapper'>
-                    <base-card .role=${ this.role } @clicked=${ this.handleClick }></base-card>
-                </div>
+                <base-card .role=${ this.role } @clicked=${ this.handleClick }></base-card>
                 <div class='name'>${ this.player.name }</div>
             </div>
         `
