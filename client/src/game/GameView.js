@@ -1,5 +1,5 @@
 import './PlayerGrid'
-import CenterCardGrid from './CenterCardGrid'
+import './CenterCardGrid'
 import './LowerBox'
 import './GameView.css'
 
@@ -19,7 +19,6 @@ class GameView {
         game.observeRole('center', role => this.centerCardGrid.exposeCard('center', role))
         game.observeRole('right', role => this.centerCardGrid.exposeCard('right', role))
 
-        //this.centerCardGrid = new CenterCardGrid(game, interaction)
         this.lowerBox = document.createElement('lower-box')
         this.lowerBox.role = game.player.startRole
 

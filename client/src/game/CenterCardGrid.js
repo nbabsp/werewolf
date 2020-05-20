@@ -1,7 +1,5 @@
-import './CenterCardGrid.css'
 import './BaseCard'
 import { LitElement, html, css} from 'lit-element'
-import './BasePlayer'
 
 class CenterCardGrid extends LitElement {
     static get properties() {
@@ -36,15 +34,21 @@ class CenterCardGrid extends LitElement {
         baseCard.role = role
     }
 
-    cardClicked(event) {
-        this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
+    leftCardClicked(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: 'left' }))
+    }
+    centerCardClicked(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: 'center' }))
+    }
+    rightCardClicked(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: 'right' }))
     }
 
     render() {
         return html`
-            <div><base-card id=left @clicked=${ this.cardClicked }/></div>
-            <div><base-card id=center @clicked=${ this.cardClicked }/></div>
-            <div><base-card id=right @clicked=${ this.cardClicked }/></div>
+            <div><base-card id=left @clicked=${ this.leftCardClicked }/></div>
+            <div><base-card id=center @clicked=${ this.centerCardClicked }/></div>
+            <div><base-card id=right @clicked=${ this.rightCardClicked }/></div>
         `
     }
 }

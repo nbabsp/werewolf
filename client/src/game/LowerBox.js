@@ -1,6 +1,6 @@
 import { LitElement, html, css} from 'lit-element'
 import './BaseCard.js'
-import './DescriptoinBox.js'
+import './DescriptionBox.js'
 import './CountDownTimer'
 
 class LowerBox extends LitElement {

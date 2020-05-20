@@ -1,4 +1,14 @@
 import Requestor from '../common/Requestor'
+import GameHandler from './gameHandelers/GameHandler'
+import GameHandlerWerewolf from './gameHandelers/GameHandlerWerewolf'
+import GameHandlerMinion from './gameHandelers/GameHandlerMinion'
+import GameHandlerMason from './gameHandelers/GameHandlerMason'
+import GameHandlerSeer from './gameHandelers/GameHandlerSeer'
+import GameHandlerInsomniac from './gameHandelers/GameHandlerInsomniac'
+import GameHandlerVillager from './gameHandelers/GameHandlerVillager'
+import GameHandlerTanner from './gameHandelers/GameHandlerTanner'
+import GameHandlerHunter from './gameHandelers/GameHandlerHunter'
+
 
 let host = 'localhost'
 let port = 9615
@@ -21,126 +31,6 @@ let GameMasterRequestor = {
     minionP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/minion`),
 }
 
-class GameHandler {
-    constructor(game) {
-        this._game = game
-        this._player = game.player
-        this._status = 'unknown'
-        this._voteId = null
-    }
-
-    _exposeStartRole(id) {
-        if (id == 'left' || id == 'center' || id == 'right') {
-            this._game.setRole(id, this._game.center[id])
-        }
-        else {
-            let player = this._game.players.find(player => player.id == id)
-            this._game.setRole(player.id, player.startRole)
-        }
-    }
-
-    _hideRole(id) {
-        this._game.setRole(id, null)
-    }
-
-    onClick(id) {
-        switch (this._status) {
-            case 'night':
-                this._nightClick(id)
-                break
-            case 'day':
-                this._dayClick(id)
-                break
-        }
-    }
-
-    _nightClick(id) {}
-    _dayClick(id) {
-        if (this._player.id == id) return
-        let player = this._game.players.find(player => player.id == id)
-        if (!player || id == this._voteId) return
-        if (this._voteId) this._game.setRole(this._voteId, null)
-        this._game.setRole(id, 'selected')
-        this._voteId = id
-    }
-
-    async timerP(duration) {
-        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
-        this._game.time = duration
-        while(duration >= 0) {
-            await waitP(1)
-            duration = duration - 1
-            this._game.time = duration
-        }
-        this._game.time = null
-    }
-
-    async playP() {
-        await this.timerP(0) // give players a chance to internalize their card
-        console.log('night!')
-        this._status = 'night'
-        this._startNightP()
-        await this.timerP(0) // give players a chance to perform their action
-        this._status = 'day'
-        console.log('day!')
-        
-        let arr = this._game.players.filter(p => p.id != this._player.id)
-        if (arr.length > 0) {
-            let id = arr[Math.floor(Math.random() * arr.length)].id
-            this._game.setRole(id, 'selected')
-            this._voteId = id
-        }
-        
-        this._endNightP()
-    }
-
-    async _startNightP() {}
-    async _endNightP() {}
-}
-
-class GameHandlerWerewolf extends GameHandler {
-    constructor(game) {
-        super(game)
-        this._werewolfIds = []
-        this._loneWolf = false
-        this._peekedId = null
-    }
-
-    _nightClick(id) {
-        if (this._loneWolf && !this._peekedId && this._game.center[id]) {
-            this._peekedId = id
-            this._exposeStartRole(id)
-        }
-    }
-
-    async _startNightP() {
-        this._werewolfIds = await GameMasterRequestor.werewolfP(this._game.id, this._player.id)
-        this._werewolfIds.forEach(id => this._exposeStartRole(id))
-        this._loneWolf = this._werewolfIds.length == 1
-    }
-
-    async _endNightP() {
-        this._werewolfIds.forEach(id => this._hideRole(id))
-        if (this._peekedId) this._hideRole(this._peekedId)
-    }
-}
-
-class GameHandlerMinion extends GameHandler {
-    constructor(game) {
-        super(game)
-        this._werewolfIds = []
-    }
-
-    async _startNightP() {
-        this._werewolfIds = await GameMasterRequestor.minionP(this._game.id, this._player.id)
-        this._werewolfIds.forEach(playerId => this._game.setRole(playerId, 'werewolf'))
-    }
-
-    async _endNightP() {
-        this._werewolfIds.forEach(playerId => this._game.setRole(playerId, null))
-    }
-}
-
 class GameMaster {
     constructor (game, interaction) {
         this._game = game
@@ -148,6 +38,27 @@ class GameMaster {
             case 'werewolf':
                 this._handler = new GameHandlerWerewolf(this._game)
                 break
+            case 'minion':
+                this._handler = new GameHandlerMinion(this._game)
+                break
+            case 'mason':
+                this._handler = new GameHandlerMason(this._game)
+                break
+            case 'seer':
+                this._handler = new GameHandlerSeer(this._game)
+                break    
+            case 'insomniac':
+                this._handler = new GameHandlerInsomniac(this._game)
+                break
+            case 'villager':
+                this._handler = new GameHandlerVillager(this._game)
+                break
+            case 'tanner':
+                this._handler = new GameHandlerTanner(this._game)
+                break
+            case 'hunter':
+                this._handler = new GameHandlerHunter(this._game)
+                break    
             default:
                 this._handler = new GameHandler(this._game)
                 break

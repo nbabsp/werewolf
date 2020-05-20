@@ -48,7 +48,7 @@ let decks = [
     null,
     null,
     ['werewolf', 'robber', 'seer', 'werewolf', 'troublemaker', 'villager'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager'],
+    ['werewolf', 'insomniac', 'seer', 'mason', 'villager', 'villager', 'villager'],
     ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager'],
     ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'mason', 'mason'],
     ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason'],
@@ -264,6 +264,19 @@ app.get('/games/:gameId/status', function(req, res) {
     if (!game) return _errorResponse(res, 'bad game id')
     _jsonResponse(res, game.json)
 })
+
+app.get('/games/:gameId/players/:id/startRole', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    let id = req.params.id
+    if (!game) return _errorResponse(res, 'bad game id')
+    if (id == 'left' || id == 'center' || id == 'right') {
+        _jsonResponse(res, game.center[id])
+    }
+    let player = game.getPlayer(id)
+    if (!player) return _errorResponse(res, 'bad player')
+    _jsonResponse(res, player.startRole)
+})
+
 ///////////////////////////////////////////////////////// night actions
 app.get('/games/:gameId/players/:playerId/werewolf', function(req, res) {
     let game = GM.get(req.params.gameId)
@@ -291,4 +304,16 @@ app.get('/games/:gameId/players/:playerId/minion', function(req, res) {
     _jsonResponse(res, werewolfPlayerIds)
 })
 
+app.get('/games/:gameId/players/:playerId/mason', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    let player = game.getPlayer(req.params.playerId)
+    if (!player) return _errorResponse(res, 'bad player')
+    if (game.getPlayer(player.id).startRole != 'mason') return _errorResponse(res, 'not a mason')
+    let masonPlayerIds = []
+    game.players.forEach(player => {
+        if (player.startRole == 'mason') masonPlayerIds.push(player.id)
+    })
+    _jsonResponse(res, masonPlayerIds)
+})
 http.createServer(app).listen(9615);
