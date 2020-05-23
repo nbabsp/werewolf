@@ -4,6 +4,7 @@ const path = require('path')
 const GameDatabase = require('./src/GameDatabase')
 const PlayerDatabase = require('./src/PlayerDatabase')
 const PlayerRoutes = require('./routes/PlayerRoutes')
+const HostRoutes = require('./routes/HostRoutes')
 
 const app = express()
 app.use(express.json())
@@ -35,23 +36,11 @@ let context = {
 
 // player routes
 let PM = new PlayerDatabase()
-PlayerRoutes.register(context, PM)
+PlayerRoutes(context, PM)
 
+// game host routes
 let GM = new GameDatabase()
-
-///////////////////////////////////////////////////////// game master
-app.post('/games/create', function(req, res) {
-    if (!req.body.name) return _errorResponse(res, 'missing name in create game')
-    _jsonResponse(res, GM.create(req.body.name))
-})
-
-app.get('/games/find', function(req, res) {
-    _jsonResponse(res, GM.find())
-})
-
-app.post('/games/clear', function(req, res) {
-    _jsonResponse(res, GM.clear())
-})
+HostRoutes(context, GM)
 
 ///////////////////////////////////////////////////////// game
 app.get('/games/:gameId', function(req, res) {
