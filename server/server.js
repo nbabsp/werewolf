@@ -1,7 +1,11 @@
 const http = require('http');
 const express = require('express')
 const path = require('path')
-const crypto = require('crypto')
+const GameDatabase = require('./src/GameDatabase')
+const PlayerDatabase = require('./src/PlayerDatabase')
+
+let PM = new PlayerDatabase()
+let GM = new GameDatabase()
 
 const app = express()
 app.use(express.json())
@@ -14,150 +18,6 @@ app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Methods', 'PUT, POST, GET')
     next()
 })
-
-
-let generateId = () => crypto.randomBytes(8).toString('hex')
-
-class PlayerManager {
-    constructor() {
-        this._players = {}
-    }
-
-    register(name) {
-        let id = generateId()
-        this._players[id] = {
-            id: id,
-            name: name
-        }
-        return this._players[id]
-    }
-
-    get(id) {
-        return this._players[id]
-    }
-
-    clear() {
-        this._players = {}
-    }
-}
-
-let PM = new PlayerManager()
-
-let decks = [
-    null,
-    null,
-    null,
-    ['werewolf', 'robber', 'seer', 'werewolf', 'troublemaker', 'villager'],
-    ['werewolf', 'insomniac', 'seer', 'mason', 'villager', 'villager', 'villager'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'mason', 'mason'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion', 'insomniac'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion', 'insomniac', 'tanner'],
-]
-
-class GamePlayer {
-    constructor(player) {
-        this.id = player.id
-        this.name = player.name
-        this.startRole = null
-    }
-
-    get json() {
-        return {
-            id: this.id,
-            name: this.name,
-            startRole: this.startRole
-        }
-    }
-}
-
-class Game {
-    constructor(name) {
-        this.id = generateId()
-        this.name = name
-        this.players = []
-        this.status = 'creating'
-        this.cards = {}
-        this.roles = {}
-        this.center = {}
-    }
-
-    get json() {
-        return {
-            id: this.id,
-            name: this.name,
-            players: this.players,
-            center: this.center,
-            status: this.status
-        }
-    }
-
-    join(player) {
-        if (this.players.find((current) => current.id == player.id)) {
-            console.log('player already in game')
-            return // accept the double-join
-        }
-        this.players.push(new GamePlayer(player))
-    }
-
-    getPlayer(playerId) {
-        return this.players.find((player) => player.id == playerId)
-    }
-
-    start() {
-        let count = this.players.length
-        this.deal(decks[count])
-        this.status = 'night'
-    }
-
-    deal(deck) {
-        if (!deck) {
-            console.log('bad number of players')
-            return
-        }
-        for(let len = this.players.length, i = 0; i < len; i++) {
-            this.cards[this.players[i].id] = deck[i]
-            this.roles[this.players[i].id] = deck[i]
-            this.players[i].startRole = deck[i]
-        }
-        this.center.left = deck[deck.length - 1]
-        this.center.center = deck[deck.length - 2]
-        this.center.right = deck[deck.length - 3]
-    }
-
-    end() {
-        this.status = 'done'
-    }
-}
-
-class GameMaster {
-    constructor() {
-        this._games = []
-    }
-
-    get(id) {
-        return this._games.find(game => game.id == id)
-    }
-
-    find() {
-        let game = this._games.find(game => game.status == 'creating')
-        return game ? game.json : { status: 'closed' }
-    }
-
-    create(name) {
-        let game = new Game(name)
-        this._games.push(game)
-        return game
-    }
-
-    clear() {
-        this._games = []
-    }
-}
-
-let GM = new GameMaster()
 
 let _errorResponse = (res, msg) => res.writeHead(400, {
     'Content-Type': 'application/json',
