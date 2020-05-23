@@ -3,9 +3,7 @@ const express = require('express')
 const path = require('path')
 const GameDatabase = require('./src/GameDatabase')
 const PlayerDatabase = require('./src/PlayerDatabase')
-
-let PM = new PlayerDatabase()
-let GM = new GameDatabase()
+const PlayerRoutes = require('./routes/PlayerRoutes')
 
 const app = express()
 app.use(express.json())
@@ -29,19 +27,17 @@ let _jsonResponse = (res, obj) => res.writeHead(200, {
     'Cache-Control': 'no-cache'
 }).end(JSON.stringify(obj, null, 2))
 
-///////////////////////////////////////////////////////// player registry
-app.post('/players/register', function(req, res) {
-    if (!req.body.name) return _errorResponse(res, 'missing name in register player')
-    _jsonResponse(res, PM.register(req.body.name))
-})
+let context = {
+    sendError: _errorResponse,
+    sendJSON: _jsonResponse,
+    app: app
+}
 
-app.get('/players/:playerId', function(req, res) {
-    _jsonResponse(res, PM.get(req.params.playerId))
-})
+// player routes
+let PM = new PlayerDatabase()
+PlayerRoutes.register(context, PM)
 
-app.get('/players/clear', function(req, res) {
-    _jsonResponse(res, PM.clear())
-})
+let GM = new GameDatabase()
 
 ///////////////////////////////////////////////////////// game master
 app.post('/games/create', function(req, res) {
