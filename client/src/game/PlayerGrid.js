@@ -29,6 +29,16 @@ class PlayerGrid extends LitElement {
         basePlayer.role = role
     }
 
+    deadPlayer(id, dead) {
+        let basePlayer = this.shadowRoot.getElementById(id)
+        basePlayer.dead = dead
+    }
+
+    setVotes(id, votes) {
+        let basePlayer = this.shadowRoot.getElementById(id)
+        basePlayer.votes = votes
+    }
+
     playerClicked(event) {
         this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
     }

@@ -21,13 +21,17 @@ class GamePlayer {
         this.id = player.id
         this.name = player.name
         this.startRole = null
+        this.role = null
+        this.votes = []
     }
 
     get json() {
         return {
             id: this.id,
             name: this.name,
-            startRole: this.startRole
+            startRole: this.startRole,
+            role: this.role,
+            votes: this.votes
         }
     }
 }
@@ -80,6 +84,7 @@ class Game {
             this.cards[this.players[i].id] = deck[i]
             this.roles[this.players[i].id] = deck[i]
             this.players[i].startRole = deck[i]
+            this.players[i].role = deck[i]
         }
         this.center.left = deck[deck.length - 1]
         this.center.center = deck[deck.length - 2]

@@ -1,4 +1,3 @@
-import Requestor from '../common/Requestor'
 import GameHandler from './gameHandelers/GameHandler'
 import GameHandlerWerewolf from './gameHandelers/GameHandlerWerewolf'
 import GameHandlerMinion from './gameHandelers/GameHandlerMinion'
@@ -8,28 +7,6 @@ import GameHandlerInsomniac from './gameHandelers/GameHandlerInsomniac'
 import GameHandlerVillager from './gameHandelers/GameHandlerVillager'
 import GameHandlerTanner from './gameHandelers/GameHandlerTanner'
 import GameHandlerHunter from './gameHandelers/GameHandlerHunter'
-
-
-let host = 'localhost'
-let port = 9615
-
-let GameRequestor = {
-    werewolfP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/werewolf`),
-    minionP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/minion`),
-    masonP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/mason`),
-    seerP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/seer`),
-    robberP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/robber`),
-    troublemakerP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/troublemaker`),
-    drunkP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/drunk`),
-    insomniacP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/insomniac`)
-}
-
-let GameMasterRequestor = {
-    statusP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/status`),
-    
-    werewolfP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/werewolf`),
-    minionP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/minion`),
-}
 
 class GameMaster {
     constructor (game, interaction) {
@@ -46,7 +23,7 @@ class GameMaster {
                 break
             case 'seer':
                 this._handler = new GameHandlerSeer(this._game)
-                break    
+                break
             case 'insomniac':
                 this._handler = new GameHandlerInsomniac(this._game)
                 break
@@ -58,7 +35,7 @@ class GameMaster {
                 break
             case 'hunter':
                 this._handler = new GameHandlerHunter(this._game)
-                break    
+                break
             default:
                 this._handler = new GameHandler(this._game)
                 break

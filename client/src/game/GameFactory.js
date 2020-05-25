@@ -16,6 +16,10 @@ class Game {
         this._timeObservers = []
         this._roleObservers = {}
         this.players.forEach(player => this._roleObservers[player.id] = [])
+        this._deathObservers = {}
+        this.players.forEach(player => this._deathObservers[player.id] = [])
+        this._voteObservers = {}
+        this.players.forEach(player => this._voteObservers[player.id] = [])
         this._roleObservers.left = []
         this._roleObservers.center = []
         this._roleObservers.right = []
@@ -29,8 +33,24 @@ class Game {
         this._roleObservers[id].forEach(callback => callback(role))
     }
 
+    setDeath(id, dead) {
+        this._deathObservers[id].forEach(callback => callback(dead))
+    }
+
+    setVotes(id, votes) {
+        this._voteObservers[id].forEach(callback => callback(votes))
+    }
+
     observeRole(id, callback) {
         this._roleObservers[id].push(callback)
+    }
+
+    observeDeath(id, callback) {
+        this._deathObservers[id].push(callback)
+    }
+
+    observeVotes(id, callback) {
+        this._voteObservers[id].push(callback)
     }
 
     observeTime(callback) {
