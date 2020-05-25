@@ -40,7 +40,7 @@ PlayerRoutes(context, PM)
 
 // game host routes
 let GM = new GameDatabase()
-HostRoutes(context, GM)
+HostRoutes(context, PM, GM)
 
 ///////////////////////////////////////////////////////// game
 app.get('/games/:gameId', function(req, res) {

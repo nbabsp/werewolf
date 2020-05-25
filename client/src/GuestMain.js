@@ -11,19 +11,31 @@ let port = 9615
 let PlayerRequestor = {
     registerP: (name) => Requestor.postP(host, port, '/players/register', {name: name}),
     playerP: (playerId) => Requestor.getP(host, port, `/players/${playerId}`),
-    findP: (callback) => Requestor.waitForStatusChangeP(host, port, '/games/find', 'closed', callback),
-    joinP: (gameId, playerId) => Requestor.putP(host, port, `/games/${gameId}/players/${playerId}`),
     playersP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/players`),
     waitForStartP: (gameId, callback) => Requestor.waitForStatusChangeP(host, port, `/games/${gameId}/status`, 'creating', callback)
 }
 
-async function findGameP() {
+let findGameP = (playerId) => new Promise((resolve, reject) => {
+    let source = new EventSource(`http://${host}:${port}/games/find/${playerId}`)
+    source.onmessage = (e) => {
+        console.log('got message', e, e.data)
+        console.log('closing', playerId)
+        source.close()
+        resolve(e.data)
+    }
+    source.onerror = (e) => {
+        console.log('got an error', e)
+        source.close()
+    }
+})
+
+async function joinGameP(playerId) {
     let div = document.createElement('div')
     div.appendChild(document.createTextNode('Looking for a Game...'))
     document.body.appendChild(div)
-    let response = await PlayerRequestor.findP()
+    let gameId = await findGameP(playerId)
     div.remove()
-    return response.id
+    return gameId
 }
 
 async function waitInLobbyP(gameId) {
@@ -36,8 +48,7 @@ async function waitInLobbyP(gameId) {
 }
 
 async function playP(playerId) {
-    let gameId = await findGameP()
-    await PlayerRequestor.joinP(gameId, playerId)
+    let gameId = await joinGameP(playerId)
     await waitInLobbyP(gameId)
 
     let _clickObservers = []
