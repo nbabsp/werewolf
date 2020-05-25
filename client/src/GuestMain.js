@@ -9,7 +9,6 @@ let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
     playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
-    waitForStartP: (gameId, callback) => StaticRequestor.waitForStatusChangeP(`/games/${gameId}/status`, 'creating', callback),
     findGameSource: (playerId) => StaticRequestor.eventSource(`/games/find/${playerId}`),
     lobbySource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/lobby/${playerId}`)
 }

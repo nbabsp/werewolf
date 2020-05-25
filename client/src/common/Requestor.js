@@ -50,24 +50,6 @@ let _sendJSONP = function(host, port, method, path, json) {
 }
 
 let Requestor = {
-    waitForStatusChangeP: async (host, port, path, status, callback) => {
-        console.log('waiting', host, port)
-        async function _waitP(sec) {
-            if(sec < 1) {
-                return Promise.reject("Time must be greater than 1 second")
-            }
-            console.log('waiting...')
-            return new Promise(resolve => setTimeout(resolve, sec*1000))
-        }
-        let response = await _authRequestP(host, port, 'GET', path, {})
-        if (callback) callback(response)
-        while(response.status == status) {
-            await _waitP(1)
-            response = await _authRequestP(host, port, 'GET', path, {})
-            if (callback) callback(response)
-        }
-        return response
-    },
     getP: (host, port, path) => _authRequestP(host, port, 'GET', path, {}),
     putP: (host, port, path, json) => _sendJSONP(host, port, 'PUT', path, json),
     postP: (host, port, path, json) => _sendJSONP(host, port, 'POST', path, json),
