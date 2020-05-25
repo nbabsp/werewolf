@@ -1,13 +1,10 @@
-import Requestor from '../common/Requestor'
+import StaticRequestor from '../common/StaticRequestor'
 import './HostControls'
 
-let host = 'localhost'
-let port = 9615
-
 let HostRequestor = {
-    createP: (name) => Requestor.postP(host, port, '/games/create', {name: name}),
-    clearP: () => Requestor.postP(host, port, `/games/clear`),
-    startP: (gameId) => Requestor.postP(host, port, `/games/${gameId}/start`),
+    createP: (name) => StaticRequestor.postP('/games/create', {name: name}),
+    clearP: () => StaticRequestor.postP(`/games/clear`),
+    startP: (gameId) => StaticRequestor.postP(`/games/${gameId}/start`),
 }
 
 async function hostGameP(gameId) {

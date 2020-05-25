@@ -1,10 +1,8 @@
 import GameHandler from './GameHandler'
-import Requestor from '../../common/Requestor'
-let host = 'localhost'
-let port = 9615
+import StaticRequestor from '../../common/StaticRequestor'
 
 let GameMasterRequestor = {
-    minionP: (gameId, playerId) => Requestor.getP(host, port, `/games/${gameId}/players/${playerId}/minion`),
+    minionP: (gameId, playerId) => StaticRequestor.getP(`/games/${gameId}/players/${playerId}/minion`),
 }
 
 class GameHandlerMinion extends GameHandler {

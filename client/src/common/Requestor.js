@@ -51,6 +51,7 @@ let _sendJSONP = function(host, port, method, path, json) {
 
 let Requestor = {
     waitForStatusChangeP: async (host, port, path, status, callback) => {
+        console.log('waiting', host, port)
         async function _waitP(sec) {
             if(sec < 1) {
                 return Promise.reject("Time must be greater than 1 second")

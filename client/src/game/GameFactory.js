@@ -1,10 +1,7 @@
-import Requestor from '../common/Requestor'
-
-let host = 'localhost'
-let port = 9615
+import StaticRequestor from '../common/StaticRequestor'
 
 let GameFactoryRequestor = {
-    getP: (gameId) => Requestor.getP(host, port, `/games/${gameId}`),
+    getP: (gameId) => StaticRequestor.getP(`/games/${gameId}`),
 }
 
 class Game {

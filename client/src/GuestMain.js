@@ -1,4 +1,4 @@
-import Requestor from './common/Requestor'
+import StaticRequestor from './common/StaticRequestor'
 import InputPopover from './common/InputPopover'
 import GameFactory from './game/GameFactory'
 import GameMaster from './game/GameMaster'
@@ -9,10 +9,10 @@ let host = 'localhost'
 let port = 9615
 
 let PlayerRequestor = {
-    registerP: (name) => Requestor.postP(host, port, '/players/register', {name: name}),
-    playerP: (playerId) => Requestor.getP(host, port, `/players/${playerId}`),
-    playersP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/players`),
-    waitForStartP: (gameId, callback) => Requestor.waitForStatusChangeP(host, port, `/games/${gameId}/status`, 'creating', callback)
+    registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
+    playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
+    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
+    waitForStartP: (gameId, callback) => StaticRequestor.waitForStatusChangeP(`/games/${gameId}/status`, 'creating', callback)
 }
 
 let findGameP = (playerId) => new Promise((resolve, reject) => {

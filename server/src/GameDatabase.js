@@ -25,11 +25,6 @@ class GameDatabase {
         return this._games.find(game => game.id == id)
     }
 
-    find() {
-        let game = this._games.find(game => game.status == 'creating')
-        return game ? game.json : { status: 'closed' }
-    }
-
     create(name) {
         let game = new Game(name)
         this._games.push(game)

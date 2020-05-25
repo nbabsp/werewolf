@@ -21,8 +21,6 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
         });
         res.flushHeaders()
 
-        console.log('yah in', playerId)
-
         gameDatabase.addListener(playerId, game => {
             console.log('observed', game)
             game.join(player)

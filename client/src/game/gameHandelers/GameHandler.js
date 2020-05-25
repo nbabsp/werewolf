@@ -1,12 +1,10 @@
-import Requestor from '../../common/Requestor'
-let host = 'localhost'
-let port = 9615
+import StaticRequestor from '../../common/StaticRequestor'
 
 let GameMasterRequestor = {    
-    voteP: (gameId, playerId, voteId) => Requestor.postP(host, port, `/games/${gameId}/players/${playerId}/vote/${voteId}/`),
-    votedP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/voted/`),
-    playersP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/players/`),
-    gameP: (gameId) => Requestor.getP(host, port, `/games/${gameId}/`),
+    voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}/`),
+    votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted/`),
+    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players/`),
+    gameP: (gameId) => StaticRequestor.getP(`/games/${gameId}/`),
 }
 
 class GameHandler {
