@@ -5,18 +5,17 @@ import GameMaster from './game/GameMaster'
 import GameView from './game/GameView'
 import './components/BaseLobby'
 
-let host = 'localhost'
-let port = 9615
-
 let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
     playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
-    waitForStartP: (gameId, callback) => StaticRequestor.waitForStatusChangeP(`/games/${gameId}/status`, 'creating', callback)
+    waitForStartP: (gameId, callback) => StaticRequestor.waitForStatusChangeP(`/games/${gameId}/status`, 'creating', callback),
+    findGameSource: (playerId) => StaticRequestor.eventSource(`/games/find/${playerId}`),
+    lobbySource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/lobby/${playerId}`)
 }
 
 let findGameP = (playerId) => new Promise((resolve, reject) => {
-    let source = new EventSource(`http://${host}:${port}/games/find/${playerId}`)
+    let source = PlayerRequestor.findGameSource(playerId)
     source.onmessage = (e) => {
         console.log('got message', e, e.data)
         console.log('closing', playerId)
@@ -38,18 +37,30 @@ async function joinGameP(playerId) {
     return gameId
 }
 
-async function waitInLobbyP(gameId) {
-    let lobby = document.createElement('base-lobby')
-    document.body.appendChild(lobby)
-    await PlayerRequestor.waitForStartP(gameId, async () => {
-        lobby.players = await PlayerRequestor.playersP(gameId)
-    })
-    lobby.remove()
-}
+let waitInLobbyP = (lobby, playerId, gameId) => new Promise((resolve, reject) => {
+    let source = PlayerRequestor.lobbySource(playerId, gameId)
+    source.onmessage = (e) => {
+        console.log('got lobby message', JSON.parse(e.data))
+        let game = JSON.parse(e.data)
+        lobby.players = game.players
+        if (game.status != 'creating') {
+            source.close()
+            resolve(game)
+        }
+    }
+    source.onerror = (e) => {
+        console.log('got an error', e)
+        source.close()
+    }
+})
 
 async function playP(playerId) {
     let gameId = await joinGameP(playerId)
-    await waitInLobbyP(gameId)
+
+    let lobby = document.createElement('base-lobby')
+    document.body.appendChild(lobby)
+    await waitInLobbyP(lobby, playerId, gameId)
+    lobby.remove()
 
     let _clickObservers = []
     let interaction = {
