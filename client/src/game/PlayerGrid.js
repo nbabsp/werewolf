@@ -45,7 +45,7 @@ class PlayerGrid extends LitElement {
 
     render() {
         return html`
-            <div>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
+            <div styles='height:${ 182 * (this.players.length % 4 + 1) }px'>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
         `
     }
 }

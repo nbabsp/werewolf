@@ -18,6 +18,7 @@ class BaseCard extends LitElement {
                 width: 100px;
                 object-fit: contain;
                 cursor: pointer;
+                z-index: 1;
             }
         `
     }

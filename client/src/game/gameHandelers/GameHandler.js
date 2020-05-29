@@ -87,7 +87,7 @@ class GameHandler {
         this._status = 'ending'
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
 
-        await this.timerP(1) // countdown to display end
+        await this.timerP(3) // countdown to display end
 
         this._endGameP()
     }
@@ -127,7 +127,9 @@ class GameHandler {
             }
         })
 
-        voted.forEach(player => this._game.setDeath(player.id, true))
+        if (voted[0].votes.length =! 1) {
+            voted.forEach(player => this._game.setDeath(player.id, true))
+        }
     }
 }
 
