@@ -43,6 +43,30 @@ let GM = new GameDatabase()
 HostRoutes(context, PM, GM)
 
 ///////////////////////////////////////////////////////// game
+app.get('/games/:gameId/lobby/:playerId', (req, res) => {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    let playerId = req.params.playerId
+    let player = PM.get(req.params.playerId)
+    if (!player) return _errorResponse(res, 'unregistered playerId in find')
+
+    res.writeHead(200, {
+        'Connection': 'keep-alive',
+        'Cache-Control': 'no-cache',
+        'Content-Type': 'text/event-stream'
+    });
+    res.flushHeaders()
+
+    game.addListener(playerId, game => {
+        res.write(`data: ${JSON.stringify(game.json)}\n\n`)
+    })
+
+    req.on('close', () => {
+        console.log('lobby closed from client', playerId)
+        game.removeListener(playerId)
+    })
+})
+
 app.get('/games/:gameId', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')

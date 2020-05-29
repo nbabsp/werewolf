@@ -45,6 +45,7 @@ class Game {
         this.cards = {}
         this.roles = {}
         this.center = {}
+        this._handlers = {}
     }
 
     get json() {
@@ -57,12 +58,25 @@ class Game {
         }
     }
 
+    addListener(playerId, callback) {
+        callback(this)
+        this._handlers[playerId] = callback
+    }
+
+    removeListener(playerId) {
+        delete this._handlers[playerId]
+        console.log('game hand', this._handlers)
+    }
+
     join(player) {
         if (this.players.find((current) => current.id == player.id)) {
             console.log('player already in game')
             return // accept the double-join
         }
         this.players.push(new GamePlayer(player))
+
+        // notify handlers that we have a new player
+        Object.values(this._handlers).forEach(callback => callback(this))
     }
 
     getPlayer(playerId) {
@@ -73,6 +87,7 @@ class Game {
         let count = this.players.length
         this.deal(decks[count])
         this.status = 'night'
+        Object.values(this._handlers).forEach(callback => callback(this))
     }
 
     deal(deck) {
