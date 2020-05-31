@@ -10,7 +10,7 @@ let PlayerRequestor = {
     playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
     findGameSource: (playerId) => StaticRequestor.eventSource(`/games/find/${playerId}`),
-    lobbySource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/lobby/${playerId}`)
+    statusSource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`)
 }
 
 let findGameP = (playerId) => new Promise((resolve, reject) => {
@@ -37,7 +37,7 @@ async function joinGameP(playerId) {
 }
 
 let waitInLobbyP = (lobby, playerId, gameId) => new Promise((resolve, reject) => {
-    let source = PlayerRequestor.lobbySource(playerId, gameId)
+    let source = PlayerRequestor.statusSource(playerId, gameId)
     source.onmessage = (e) => {
         console.log('got lobby message', JSON.parse(e.data))
         let game = JSON.parse(e.data)

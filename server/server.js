@@ -43,11 +43,11 @@ let GM = new GameDatabase()
 HostRoutes(context, PM, GM)
 
 ///////////////////////////////////////////////////////// game
-app.get('/games/:gameId/lobby/:playerId', (req, res) => {
+app.get('/games/:gameId/status/:playerId', (req, res) => {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
     let playerId = req.params.playerId
-    let player = PM.get(req.params.playerId)
+    let player = game.getPlayer(playerId)
     if (!player) return _errorResponse(res, 'unregistered playerId in find')
 
     res.writeHead(200, {
@@ -62,7 +62,7 @@ app.get('/games/:gameId/lobby/:playerId', (req, res) => {
     })
 
     req.on('close', () => {
-        console.log('lobby closed from client', playerId)
+        console.log('closed from client', playerId)
         game.removeListener(playerId)
     })
 })
@@ -157,6 +157,14 @@ app.post('/games/:gameId/players/:playerId/vote/:votedId', function(req, res) {
     if (!votedPlayer) return _errorResponse(res, 'bad player')
     votedPlayer.votes.push(player.name)
     _jsonResponse(res, game.json)
+})
+
+app.post('/games/:gameId/players/:playerId/endNightAction', (req, res) => {
+    let game = GM.get(req.params.gameId)
+    let playerId = req.params.playerId
+    if (!game) return _errorResponse(res, 'bad game id')
+    if (!game.nightAction(playerId)) return _errorResponse(res, 'unregistered playerId in find')
+    _jsonResponse(res, {})
 })
 
 ///////////////////////////////////////////////////////// night actions

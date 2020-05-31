@@ -23,6 +23,7 @@ class GamePlayer {
         this.startRole = null
         this.role = null
         this.votes = []
+        this.nightActionComplete = false
     }
 
     get json() {
@@ -31,7 +32,8 @@ class GamePlayer {
             name: this.name,
             startRole: this.startRole,
             role: this.role,
-            votes: this.votes
+            votes: this.votes,
+            nightActionComplete: this.nightActionComplete
         }
     }
 }
@@ -46,6 +48,7 @@ class Game {
         this.roles = {}
         this.center = {}
         this._handlers = {}
+        this.nightActionsComplete = 0
     }
 
     get json() {
@@ -54,7 +57,8 @@ class Game {
             name: this.name,
             players: this.players,
             center: this.center,
-            status: this.status
+            status: this.status,
+            nightActionsComplete: this.nightActionsComplete
         }
     }
 
@@ -86,8 +90,7 @@ class Game {
     start() {
         let count = this.players.length
         this.deal(decks[count])
-        this.status = 'night'
-        Object.values(this._handlers).forEach(callback => callback(this))
+        this.updateStatus('night')
     }
 
     deal(deck) {
@@ -104,6 +107,26 @@ class Game {
         this.center.left = deck[deck.length - 1]
         this.center.center = deck[deck.length - 2]
         this.center.right = deck[deck.length - 3]
+    }
+
+    updateStatus(status) {
+        this.status = status
+        Object.values(this._handlers).forEach(callback => callback(this))
+    }
+
+    daybreak() {
+        this.updateStatus('day')
+
+    }
+
+    nightAction(playerId) {
+        let player = this.getPlayer(playerId)
+        if (!player) return false
+        player.nightActionComplete = true
+        if (this.players.filter(player => player.nightActionComplete).length == this.players.length) {
+            this.daybreak()
+        }
+        return true
     }
 
     end() {

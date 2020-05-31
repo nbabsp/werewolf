@@ -1,11 +1,29 @@
 import StaticRequestor from '../../common/StaticRequestor'
 
 let GameMasterRequestor = {    
-    voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}/`),
-    votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted/`),
-    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players/`),
-    gameP: (gameId) => StaticRequestor.getP(`/games/${gameId}/`),
+    voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
+    votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted`),
+    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
+    gameP: (gameId) => StaticRequestor.getP(`/games/${gameId}`),
+    endNightActionP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/endNightAction`),
+    statusSource: (gameId, playerId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
 }
+
+let waitForNightEndP = (gameId, playerId) => new Promise((resolve, reject) => {
+    let source = GameMasterRequestor.statusSource(gameId, playerId)
+    source.onmessage = (e) => {
+        console.log('got night action message', JSON.parse(e.data))
+        let game = JSON.parse(e.data)
+        if (game.status == 'day') {
+            source.close()
+            resolve(game)
+        }
+    }
+    source.onerror = (e) => {
+        console.log('got an error', e)
+        source.close()
+    }
+})
 
 class GameHandler {
     constructor(game) {
@@ -69,7 +87,10 @@ class GameHandler {
         console.log('night!')
         this._status = 'night'
         this._startNightP()
-        await this.timerP(0) // give players a chance to perform their action
+        await this.timerP(5) // give players a chance to perform their action
+        console.log(await GameMasterRequestor.endNightActionP(this._game.id, this._player.id))
+        this._status = 'night action over'
+        await waitForNightEndP(this._game.id, this._player.id)
         this._status = 'day'
         console.log('day!')
         this._endNightP()
@@ -92,8 +113,8 @@ class GameHandler {
 
     async _startNightP() {}
     async _endNightP() {}
+    
     async _endGameP() {
-
         let players = await GameMasterRequestor.playersP(this._game.id)
         let newPlayer
         this._game.players.forEach(player => {
