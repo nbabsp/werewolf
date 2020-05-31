@@ -9,12 +9,12 @@ let GameMasterRequestor = {
     statusSource: (gameId, playerId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
 }
 
-let waitForNightEndP = (gameId, playerId) => new Promise((resolve, reject) => {
+let waitForStatusP = (gameId, playerId, status) => new Promise((resolve, reject) => {
     let source = GameMasterRequestor.statusSource(gameId, playerId)
     source.onmessage = (e) => {
-        console.log('got night action message', JSON.parse(e.data))
+        console.log('got message', JSON.parse(e.data))
         let game = JSON.parse(e.data)
-        if (game.status == 'day') {
+        if (game.status == status) {
             source.close()
             resolve(game)
         }
@@ -88,26 +88,24 @@ class GameHandler {
         this._status = 'night'
         this._startNightP()
         await this.timerP(5) // give players a chance to perform their action
-        console.log(await GameMasterRequestor.endNightActionP(this._game.id, this._player.id))
+        await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
         this._status = 'night action over'
-        await waitForNightEndP(this._game.id, this._player.id)
+        await waitForStatusP(this._game.id, this._player.id, 'day')
+        this._endNightP()
         this._status = 'day'
         console.log('day!')
-        this._endNightP()
-
+        // randomly select voted player
         let arr = this._game.players.filter(p => p.id != this._player.id)
         if (arr.length > 0) {
             let id = arr[Math.floor(Math.random() * arr.length)].id
             this._game.setRole(id, 'selected2')
             this._voteId = id
         }
-
-        await this.timerP(5) // countdown to vote
-        this._status = 'ending'
+        await this.timerP(5) // countdown for discussion
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
-
-        await this.timerP(3) // countdown to display end
-
+        await waitForStatusP(this._game.id, this._player.id, 'voted')
+        this._status = 'voted'
+        console.log('voted!')
         this._endGameP()
     }
 
@@ -133,21 +131,21 @@ class GameHandler {
 
         console.log(this._game)
 
-        let voted = []
+        let killed = []
 
         this._game.players.forEach( player => {
-            if (!voted[0]) {
-                voted.push(player)
-            } else if (player.votes.length > voted[0].votes.length) {
-                    voted = []
-                    voted.push(player)
-            } else if (player.votes.length == voted[0].votes.length) {
-                voted.push(player)
+            if (!killed[0]) {
+                killed.push(player)
+            } else if (player.votes.length > killed[0].votes.length) {
+                killed = []
+                killed.push(player)
+            } else if (player.votes.length == killed[0].votes.length) {
+                killed.push(player)
             }
         })
 
-        if (voted[0].votes.length =! 1) {
-            voted.forEach(player => this._game.setDeath(player.id, true))
+        if (killed[0].votes.length != 1) {
+            killed.forEach(player => this._game.setDeath(player.id, true))
         }
     }
 }

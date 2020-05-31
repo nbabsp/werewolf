@@ -148,14 +148,10 @@ app.get('/games/:gameId/players/:id/startRole', function(req, res) {
 
 app.post('/games/:gameId/players/:playerId/vote/:votedId', function(req, res) {
     let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
     let playerId = req.params.playerId
     let votedId = req.params.votedId
-    if (!game) return _errorResponse(res, 'bad game id')
-    let player = game.getPlayer(playerId)
-    if (!player) return _errorResponse(res, 'bad player')
-    let votedPlayer = game.getPlayer(votedId)
-    if (!votedPlayer) return _errorResponse(res, 'bad player')
-    votedPlayer.votes.push(player.name)
+    if (!game.voteAction(playerId, votedId)) return _errorResponse(res, 'unregistered playerId or votedId in find')
     _jsonResponse(res, game.json)
 })
 

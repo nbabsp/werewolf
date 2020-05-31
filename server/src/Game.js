@@ -24,6 +24,7 @@ class GamePlayer {
         this.role = null
         this.votes = []
         this.nightActionComplete = false
+        this.voted = false
     }
 
     get json() {
@@ -33,7 +34,8 @@ class GamePlayer {
             startRole: this.startRole,
             role: this.role,
             votes: this.votes,
-            nightActionComplete: this.nightActionComplete
+            nightActionComplete: this.nightActionComplete,
+            voted: this.voted
         }
     }
 }
@@ -48,7 +50,6 @@ class Game {
         this.roles = {}
         this.center = {}
         this._handlers = {}
-        this.nightActionsComplete = 0
     }
 
     get json() {
@@ -58,7 +59,6 @@ class Game {
             players: this.players,
             center: this.center,
             status: this.status,
-            nightActionsComplete: this.nightActionsComplete
         }
     }
 
@@ -119,6 +119,10 @@ class Game {
 
     }
 
+    vote() {
+        this.updateStatus('voted')
+    }
+
     nightAction(playerId) {
         let player = this.getPlayer(playerId)
         if (!player) return false
@@ -127,6 +131,20 @@ class Game {
             this.daybreak()
         }
         return true
+    }
+
+    voteAction(playerId, votedId) {
+        let player = this.getPlayer(playerId)
+        if (!player) return false
+        let votedPlayer = this.getPlayer(votedId)
+        if (!votedPlayer) return false
+        votedPlayer.votes.push(player.name)
+        player.voted = true
+        if (this.players.filter(player => player.voted).length == this.players.length) {
+            this.vote()
+        }
+        return true
+
     }
 
     end() {
