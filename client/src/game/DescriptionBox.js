@@ -11,6 +11,7 @@ let descriptions = {
     insomniac: 'Look at your card at the end of the night phase',
     villager: 'Listen carefully',
     tanner: 'Don\'t die... or well... do die',
+    discussion: 'Discuss the night phase',
     blank: ''
 }
 

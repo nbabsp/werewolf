@@ -6,7 +6,7 @@ let decks = [
     null,
     null,
     null,
-    ['werewolf', 'robber', 'seer', 'werewolf', 'troublemaker', 'villager'],
+    ['werewolf', 'robber', 'troublemaker', 'drunk', 'werewolf', 'villager'],
     ['werewolf', 'insomniac', 'seer', 'mason', 'villager', 'villager', 'villager'],
     ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager'],
     ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'mason', 'mason'],

@@ -21,6 +21,7 @@ class Game {
         this._roleObservers.center = []
         this._roleObservers.right = []
         this._roleObservers.lower = []
+        this._descritionObservers = []
     }
 
     set time(time) {
@@ -29,6 +30,10 @@ class Game {
 
     setRole(id, role) {
         this._roleObservers[id].forEach(callback => callback(role))
+    }
+
+    setDescription(description) {
+        this._descritionObservers.forEach(callback => callback(description))
     }
 
     setDeath(id, dead) {
@@ -41,6 +46,10 @@ class Game {
 
     observeRole(id, callback) {
         this._roleObservers[id].push(callback)
+    }
+
+    observeDescription(callback) {
+        this._descritionObservers.push(callback)
     }
 
     observeDeath(id, callback) {

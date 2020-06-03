@@ -215,4 +215,28 @@ app.post('/games/:gameId/players/:playerId/robber/:swapIds', function(req, res) 
     _jsonResponse(res, {})
 })
 
+app.post('/games/:gameId/players/:playerId/troublemaker/:swapIds', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    let player = game.getPlayer(req.params.playerId)
+    if (!player) return _errorResponse(res, 'bad player')
+    if (game.getPlayer(player.id).startRole != 'troublemaker') return _errorResponse(res, 'not a troublemaker')
+    let swapIds = JSON.parse(req.params.swapIds)
+    if (swapIds.length != 0 && swapIds.length != 2) return _errorResponse(res, 'illegal swap')
+    game.troublemakerNightAction(swapIds)
+    _jsonResponse(res, {})
+})
+
+app.post('/games/:gameId/players/:playerId/drunk/:swapIds', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    let player = game.getPlayer(req.params.playerId)
+    if (!player) return _errorResponse(res, 'bad player')
+    if (game.getPlayer(player.id).startRole != 'drunk') return _errorResponse(res, 'not a drunk')
+    let swapIds = JSON.parse(req.params.swapIds)
+    if (swapIds.length != 0 && swapIds.length != 2) return _errorResponse(res, 'illegal swap')
+    game.drunkNightAction(swapIds)
+    _jsonResponse(res, {})
+})
+
 http.createServer(app).listen(9615);

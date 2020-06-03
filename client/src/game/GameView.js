@@ -31,6 +31,7 @@ class GameView {
 
         game.observeTime((time) => this.lowerBox.time = time)
         game.observeRole('lower', role => this.lowerBox.exposeCard(role))
+        game.observeDescription(role => this.lowerBox.changeDescription(role))
     }
     }
 

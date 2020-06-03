@@ -31,6 +31,7 @@ class GameHandler {
         this._player = game.player
         this._status = 'unknown'
         this._voteId = null
+        this._midClick = false
     }
 
     _exposeRole(id) {
@@ -89,11 +90,13 @@ class GameHandler {
     }
 
     async playP() {
+        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
         await this.timerP(0) // give players a chance to internalize their card
         console.log('night!')
         this._status = 'night'
         this._startNightP()
         await this.timerP(10) // give players a chance to perform their action
+        while(this._midClick) await waitP(1)
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
         this._status = 'night action over'
         await waitForStatusP(this._game.id, this._player.id, 'day')
@@ -101,6 +104,7 @@ class GameHandler {
         console.log(this._game)
         this._status = 'day'
         console.log('day!')
+        this._game.setDescription('discussion')
         // randomly select voted player
         let arr = this._game.players.filter(p => p.id != this._player.id)
         if (arr.length > 0) {
@@ -134,7 +138,7 @@ class GameHandler {
         this._game.setRole('center', this._game.center['center'])
         this._game.setRole('right', this._game.center['right'])
         this._game.setRole('lower', this._player.role)
-        
+
         console.log(this._game)
 
         let killed = []
