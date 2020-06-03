@@ -13,11 +13,12 @@ class GameHandlerMason extends GameHandler {
 
     async _startNightP() {
         this._masonIds = await GameMasterRequestor.masonP(this._game.id, this._player.id)
-        this._masonIds.forEach(id => this._exposeStartRole(id))
+        this._masonIds.forEach(id => this._exposeRole(id))
     }
 
     async _endNightP() {
         this._masonIds.forEach(id => this._hideRole(id))
+        this._hideRole(this._player.id)
     }
 }
 

@@ -50,6 +50,9 @@ class Game {
         this.roles = {}
         this.center = {}
         this._handlers = {}
+        this.robberSwapIds = []
+        this.troublemakerSwapIds = []
+        this.drunkSwapIds = []
     }
 
     get json() {
@@ -115,12 +118,44 @@ class Game {
     }
 
     daybreak() {
+        if(this.robberSwapIds.length > 0) {
+            let p1 = this.players.find(player => player.id == this.robberSwapIds[0])
+            let p2 = this.players.find(player => player.id == this.robberSwapIds[1])
+            let tempRole = p1.role
+            p1.role = p2.role
+            p2.role = tempRole
+        }
+        if(this.troublemakerSwapIds.length > 0) {
+            let p1 = this.players.find(player => player.id == this.troublemakerSwapIds[0])
+            let p2 = this.players.find(player => player.id == this.troublemakerSwapIds[1])
+            let tempRole = p1.role
+            p1.role = p2.role
+            p2.role = tempRole
+        }
+        if(this.drunkSwapIds.length > 0) {
+            let p1 = this.players.find(player => player.id == this.drunkSwapIds[0])
+            let centerCardRole = this.center[this.drunkSwapIds[1]]
+            let tempRole = p1.role
+            p1.role = centerCardRole
+            this.center[this.drunkSwapIds[1]] = tempRole
+        }
         this.updateStatus('day')
-
     }
 
     vote() {
         this.updateStatus('voted')
+    }
+
+    robberNightAction(swapIds) {
+        this.robberSwapIds = swapIds
+    }
+    
+    troublemakerNightAction(swapIds) {
+        this.troublemakerSwapIds = swapIds
+    }
+    
+    drunkNightAction(swapIds) {
+        this.drunkSwapIds = swapIds
     }
 
     nightAction(playerId) {
@@ -135,8 +170,10 @@ class Game {
 
     voteAction(playerId, votedId) {
         let player = this.getPlayer(playerId)
+        console.log('PLAYER', playerId)
         if (!player) return false
         let votedPlayer = this.getPlayer(votedId)
+        console.log('VOTED', votedId)
         if (!votedPlayer) return false
         votedPlayer.votes.push(player.name)
         player.voted = true

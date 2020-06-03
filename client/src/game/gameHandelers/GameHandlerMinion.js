@@ -13,11 +13,12 @@ class GameHandlerMinion extends GameHandler {
 
     async _startNightP() {
         this._werewolfIds = await GameMasterRequestor.minionP(this._game.id, this._player.id)
-        this._werewolfIds.forEach(id => this._exposeStartRole(id))
+        this._werewolfIds.forEach(id => this._exposeRole(id))
     }
 
     async _endNightP() {
         this._werewolfIds.forEach(id => this._hideRole(id))
+        this._hideRole(this._player.id)
     }
 }
 

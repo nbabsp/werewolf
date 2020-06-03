@@ -33,18 +33,24 @@ class GameHandler {
         this._voteId = null
     }
 
-    _exposeStartRole(id) {
+    _exposeRole(id) {
         if (id == 'left' || id == 'center' || id == 'right') {
             this._game.setRole(id, this._game.center[id])
         }
         else {
             let player = this._game.players.find(player => player.id == id)
-            this._game.setRole(player.id, player.startRole)
+            this._game.setRole(player.id, player.role)
+            if (player.id == this._player.id) {
+                this._game.setRole('lower', player.role)
+            }
         }
     }
 
     _hideRole(id) {
         this._game.setRole(id, null)
+        if (id == this._player.id) {
+            this._game.setRole('lower', null)
+        }
     }
 
     onClick(id) {
@@ -87,11 +93,12 @@ class GameHandler {
         console.log('night!')
         this._status = 'night'
         this._startNightP()
-        await this.timerP(5) // give players a chance to perform their action
+        await this.timerP(10) // give players a chance to perform their action
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
         this._status = 'night action over'
         await waitForStatusP(this._game.id, this._player.id, 'day')
         this._endNightP()
+        console.log(this._game)
         this._status = 'day'
         console.log('day!')
         // randomly select voted player
@@ -103,32 +110,31 @@ class GameHandler {
         }
         await this.timerP(5) // countdown for discussion
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
-        await waitForStatusP(this._game.id, this._player.id, 'voted')
+        let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'
         console.log('voted!')
-        this._endGameP()
+        this._endGameP(game)
     }
 
     async _startNightP() {}
     async _endNightP() {}
     
-    async _endGameP() {
-        let players = await GameMasterRequestor.playersP(this._game.id)
+    _endGameP(game) {
         let newPlayer
         this._game.players.forEach(player => {
-            newPlayer = players.find(p => p.id == player.id)
+            newPlayer = game.players.find(p => p.id == player.id)
             player.role = newPlayer.role
             player.votes = newPlayer.votes
             this._game.setRole(player.id, player.role)
             this._game.setVotes(player.id, player.votes)
         })
 
-        let game = await GameMasterRequestor.gameP(this._game.id)
         this._game.center = game.center
         this._game.setRole('left', this._game.center['left'])
         this._game.setRole('center', this._game.center['center'])
         this._game.setRole('right', this._game.center['right'])
-
+        this._game.setRole('lower', this._player.role)
+        
         console.log(this._game)
 
         let killed = []

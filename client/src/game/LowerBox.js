@@ -50,13 +50,18 @@ class LowerBox extends LitElement {
         this.time = null
     }
 
+    exposeCard(role) {
+        let baseCard = this.shadowRoot.getElementById('lower')
+        baseCard.role = role
+    }
+
     render() {
         return html`
             <div class='infoBox'>
                 <count-down-timer time=${ this.time }></count-down-timer>
                 <description-box role=${ this.role }></description-box>
             </div><div class='myCardWrapper'>
-                        <base-card .role=${ this.role }></base-card>
+                        <base-card id='lower' .role=${ this.role }></base-card>
                   </div>
         `
     }

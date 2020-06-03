@@ -20,6 +20,7 @@ class Game {
         this._roleObservers.left = []
         this._roleObservers.center = []
         this._roleObservers.right = []
+        this._roleObservers.lower = []
     }
 
     set time(time) {

@@ -7,7 +7,7 @@ class GameHandlerInsomniac extends GameHandler {
 
     async _startNightP() {}
     async _endNightP() {
-        this._exposeStartRole(this._player.id)
+        this._exposeRole(this._player.id)
     }
 }
 

@@ -17,19 +17,20 @@ class GameHandlerWerewolf extends GameHandler {
     async _nightClick(id) {
         if (this._loneWolf && !this._peekedId && (id == 'left' || id == 'center' || id == 'right')) {
             this._peekedId = id
-            this._exposeStartRole(id)
+            this._exposeRole(id)
         }
     }
 
     async _startNightP() {
         this._werewolfIds = await GameMasterRequestor.werewolfP(this._game.id, this._player.id)
-        this._werewolfIds.forEach(id => this._exposeStartRole(id))
+        this._werewolfIds.forEach(id => this._exposeRole(id))
         this._loneWolf = this._werewolfIds.length == 1
     }
 
     async _endNightP() {
         this._werewolfIds.forEach(id => this._hideRole(id))
         if (this._peekedId) this._hideRole(this._peekedId)
+        this._hideRole(this._player.id)
     }
 }
 

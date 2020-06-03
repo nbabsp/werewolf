@@ -29,9 +29,9 @@ class GameView {
         main.appendChild(this.lowerBox)
         this.element = main
 
-
         game.observeTime((time) => this.lowerBox.time = time)
+        game.observeRole('lower', role => this.lowerBox.exposeCard(role))
     }
-}
+    }
 
 export default GameView

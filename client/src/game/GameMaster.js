@@ -3,6 +3,9 @@ import GameHandlerWerewolf from './gameHandelers/GameHandlerWerewolf'
 import GameHandlerMinion from './gameHandelers/GameHandlerMinion'
 import GameHandlerMason from './gameHandelers/GameHandlerMason'
 import GameHandlerSeer from './gameHandelers/GameHandlerSeer'
+import GameHandlerRobber from './gameHandelers/GameHandlerRobber'
+// import GameHandlerTroublemaker from './gameHandelers/GameHandlerTroublemaker'
+// import GameHandlerDrunk from './gameHandelers/GameHandlerDrunk'
 import GameHandlerInsomniac from './gameHandelers/GameHandlerInsomniac'
 import GameHandlerVillager from './gameHandelers/GameHandlerVillager'
 import GameHandlerTanner from './gameHandelers/GameHandlerTanner'
@@ -24,6 +27,15 @@ class GameMaster {
             case 'seer':
                 this._handler = new GameHandlerSeer(this._game)
                 break
+            case 'robber':
+                this._handler = new GameHandlerRobber(this._game)
+                break
+            // case 'troublemaker':
+            //     this._handler = new GameHandlerTroublemaker(this._game)
+            //     break
+            // case 'drunk':
+            //     this._handler = new GameHandlerDrunk(this._game)
+            //     break                
             case 'insomniac':
                 this._handler = new GameHandlerInsomniac(this._game)
                 break

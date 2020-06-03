@@ -6,7 +6,9 @@ class GameHandlerTanner extends GameHandler {
     }
 
     async _startNightP() {}
-    async _endNightP() {}
+    async _endNightP() {
+        this._hideRole(this._player.id)
+    }
 }
 
 export default GameHandlerTanner

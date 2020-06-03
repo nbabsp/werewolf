@@ -12,12 +12,12 @@ class GameHandlerWerewolf extends GameHandler {
         if (!this._doneLooking) {
             if ((id == 'left' || id == 'center' || id == 'right')) {
                 this._exposedIds.push(id)
-                this._exposeStartRole(id)
+                this._exposeRole(id)
                 if (this._lookedAtOne) this._doneLooking = true
                 this._lookedAtOne = true
             } else if (!this._lookedAtOne && this._player.id != id) {
                 this._exposedIds.push(id)
-                this._exposeStartRole(id)
+                this._exposeRole(id)
                 this._doneLooking = true
             }
         }
@@ -28,6 +28,7 @@ class GameHandlerWerewolf extends GameHandler {
 
     async _endNightP() {
         this._exposedIds.forEach(id => this._hideRole(id))
+        this._hideRole(this._player.id)
     }
 }
 
