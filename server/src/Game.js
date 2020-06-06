@@ -2,6 +2,15 @@ const crypto = require('crypto')
 
 let generateId = () => crypto.randomBytes(8).toString('hex')
 
+let shuffle = inputArray => {
+    let arr = inputArray.slice()
+    let outputArray = []
+    while(arr.length > 0) {
+        outputArray.push(arr.splice(Math.floor(arr.length * Math.random()), 1))
+    }
+    return outputArray
+}
+
 let decks = [
     null,
     null,
@@ -101,15 +110,16 @@ class Game {
             console.log('bad number of players')
             return
         }
+        let shuffledDeck = shuffle(deck)
         for(let len = this.players.length, i = 0; i < len; i++) {
-            this.cards[this.players[i].id] = deck[i]
-            this.roles[this.players[i].id] = deck[i]
-            this.players[i].startRole = deck[i]
-            this.players[i].role = deck[i]
+            this.cards[this.players[i].id] = shuffledDeck[i]
+            this.roles[this.players[i].id] = shuffledDeck[i]
+            this.players[i].startRole = shuffledDeck[i]
+            this.players[i].role = shuffledDeck[i]
         }
-        this.center.left = deck[deck.length - 1]
-        this.center.center = deck[deck.length - 2]
-        this.center.right = deck[deck.length - 3]
+        this.center.left = shuffledDeck[shuffledDeck.length - 1]
+        this.center.center = shuffledDeck[shuffledDeck.length - 2]
+        this.center.right = shuffledDeck[shuffledDeck.length - 3]
     }
 
     updateStatus(status) {
