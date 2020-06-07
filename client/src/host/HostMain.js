@@ -4,15 +4,20 @@ import './HostControls'
 let HostRequestor = {
     createP: (name) => StaticRequestor.postP('/games/create', {name: name}),
     clearP: () => StaticRequestor.postP(`/games/clear`),
-    startP: (gameId) => StaticRequestor.postP(`/games/${gameId}/start`),
+    startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
 }
 
 async function hostGameP(gameId) {
     console.log('hosting game:', gameId)
     let lobby = document.createElement('host-controls')
-    lobby.startCallback = () => {
+    lobby.startCallback = async () => {
         console.log('waiting done', gameId)
-        HostRequestor.startP(gameId)
+        try {
+            await HostRequestor.startP(gameId, lobby.deck)
+            lobby.hide()
+        } catch (e) {
+            console.log('Error: ', e)
+        }
     }
     document.body.appendChild(lobby)
 }

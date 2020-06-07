@@ -21,7 +21,6 @@ class BasePlayer extends LitElement {
             vertical-align: top;
             height: 167px;
             width: 100px;
-
         }
 
         .name {
@@ -88,7 +87,7 @@ class BasePlayer extends LitElement {
                 </div>
                 ${ (this.votes.length > 0) ? html`<div class='votes'>${ this.listVotes() }</div>` : ''}
                 ${ (this.dead) ? html`<img class='dead' src='${ host }/WerewolfImages/Werewolf/dead.png'></img>` : ''}
-                </div>
+            </div>
         `
     }
 }

@@ -1,10 +1,11 @@
 import { LitElement, html, css} from 'lit-element'
-import './BaseCard'
+import './SelectCard'
 
 class SelectionGrid extends LitElement {
     static get properties() {
         return {
-            players: { type: Array }
+            cards: { type: Array },
+            selected: { type: Array }
         }
     }
 
@@ -13,15 +14,17 @@ class SelectionGrid extends LitElement {
         :host {
             background-color: #777777;
             display: block;
-            width: 480px;
+            width: 492px;
             margin: auto;
+            overflow: scroll;
+            z-index: 9;
         }
         `
     }
 
     constructor() {
         super()
-        this.players = [
+        this.cards = [
             {id: 'werewolf1', role: 'werewolf'},
             {id: 'werewolf2', role: 'werewolf'},
             {id: 'minion', role: 'minion'},
@@ -37,22 +40,22 @@ class SelectionGrid extends LitElement {
             {id: 'villager3', role: 'villager'},
             {id: 'hunter', role: 'hunter'},
             {id: 'tanner', role: 'tanner'},
-        ]
+        ],
+        this.selected = []
     }
 
-    selectedPlayer(id, selected) {
+    selectedCard(id, selected) {
         let basePlayer = this.shadowRoot.getElementById(id)
         basePlayer.selected = selected
     }
 
-
-    playerClicked(event) {
+    cardClicked(event) {
         this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
     }
 
     render() {
         return html`
-            <div styles='height:${ 182 * (this.players.length % 4 + 1) }px'>${this.players.map(player => html`<base-card id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
+            <div styles='height:${ 182 * (this.cards.length % 4 + 1) }px'>${this.cards.map(card => html`<select-card id=${ card.id } .role=${ card.role } .id=${ card.id } .selected=${ this.selected.includes(card.id)} @clicked=${ this.cardClicked }/>`)}</div>
         `
     }
 }

@@ -99,9 +99,9 @@ class Game {
         return this.players.find((player) => player.id == playerId)
     }
 
-    start() {
+    start(deck) {
         let count = this.players.length
-        this.deal(decks[count])
+        this.deal(deck)
         this.updateStatus('night')
     }
 

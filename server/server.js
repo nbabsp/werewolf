@@ -114,10 +114,13 @@ app.get('/games/:gameId/center/right', function(req, res) {
     _jsonResponse(res, { name: game.center.right })
 })
 
-app.post('/games/:gameId/start', function(req, res) {
+app.post('/games/:gameId/start/:deck', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
-    game.start()
+    let deck = JSON.parse(req.params.deck)
+    if (!deck) return _errorResponse(res, 'bad deck')
+    if (deck.length != (game.players.length + 3)) return _errorResponse(res, 'wrong number of cards')
+    game.start(deck)
     _jsonResponse(res, { status: game.status })
 })
 
