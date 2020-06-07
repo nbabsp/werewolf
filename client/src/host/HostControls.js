@@ -16,13 +16,13 @@ class HostControls extends LitElement {
         this.startCallback = null
         this.deck = []
         this.deckIds = []
-        this.hidden = false
+        this.hidden = true
     }
 
     static get styles() {
         return css`
             .topBar {
-                overflow: scroll;
+                overflow: auto;
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -40,15 +40,19 @@ class HostControls extends LitElement {
 
             .hideButton {
                 position: absolute;
-                width: 50px;
-                height: 20px;
-                right: 15px;
+                width: 60px;
+                height: 38px;
+                right: 10px;
                 top: 5px;
                 padding-top: 2px;
                 background-color: #36393E;
                 color: #FFFFFF;
                 text-align: center;
                 cursor: pointer;
+            }
+
+            .startButton {
+                margin-top: 12px;
             }
         `
     }
@@ -84,10 +88,10 @@ class HostControls extends LitElement {
     
     render() {
         return html`
-            <div class='topBar' style='height:${this.hidden ? '32px' : '676px'}'>
+            <div class='topBar' style='height:${this.hidden ? '46px' : '690px'}'>
                 ${ !this.hidden ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
-                    <cta-button text='START GAME' @click=${ this.handleClick }></cta-button>
-                    <div class='hideButton' @click=${ this.toggleHidden }>${this.hidden ? 'Show' : 'Hide'}</div>                 
+                    <cta-button class='startButton' text='START GAME' @click=${ this.handleClick }></cta-button>
+                    <div class='hideButton' @click=${ this.toggleHidden }>${this.hidden ? 'SELECT\nROLES' : 'HIDE\nROLES'}</div>                 
             </div>
         `
     }

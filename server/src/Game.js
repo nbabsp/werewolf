@@ -6,7 +6,7 @@ let shuffle = inputArray => {
     let arr = inputArray.slice()
     let outputArray = []
     while(arr.length > 0) {
-        outputArray.push(arr.splice(Math.floor(arr.length * Math.random()), 1))
+        outputArray.push(arr.splice(Math.floor(arr.length * Math.random()), 1)[0])
     }
     return outputArray
 }
@@ -100,7 +100,6 @@ class Game {
     }
 
     start(deck) {
-        let count = this.players.length
         this.deal(deck)
         this.updateStatus('night')
     }
@@ -111,11 +110,13 @@ class Game {
             return
         }
         let shuffledDeck = shuffle(deck)
+        console.log(shuffledDeck)
         for(let len = this.players.length, i = 0; i < len; i++) {
             this.cards[this.players[i].id] = shuffledDeck[i]
             this.roles[this.players[i].id] = shuffledDeck[i]
             this.players[i].startRole = shuffledDeck[i]
             this.players[i].role = shuffledDeck[i]
+            console.log(this.players[i].startRole)
         }
         this.center.left = shuffledDeck[shuffledDeck.length - 1]
         this.center.center = shuffledDeck[shuffledDeck.length - 2]
