@@ -91,7 +91,7 @@ class GameHandler {
 
     async playP() {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
-        await this.timerP(0) // give players a chance to internalize their card
+        await this.timerP(5) // give players a chance to internalize their card
         console.log('night!')
         this._status = 'night'
         this._startNightP()
@@ -112,7 +112,7 @@ class GameHandler {
             this._game.setRole(id, 'selected')
             this._voteId = id
         }
-        await this.timerP(5) // countdown for discussion
+        await this.timerP(300) // countdown for discussion
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
         let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'

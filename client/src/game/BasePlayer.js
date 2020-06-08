@@ -1,7 +1,6 @@
 import { LitElement, html, css} from 'lit-element'
 import './BaseCard'
-
-let host = 'http://localhost:9615'
+import StaticRequestor from '../common/StaticRequestor'
 
 class BasePlayer extends LitElement {
     static get properties() {
@@ -86,7 +85,7 @@ class BasePlayer extends LitElement {
                     <div class='name'>${ this.player.name }</div>
                 </div>
                 ${ (this.votes.length > 0) ? html`<div class='votes'>${ this.listVotes() }</div>` : ''}
-                ${ (this.dead) ? html`<img class='dead' src='${ host }/WerewolfImages/Werewolf/dead.png'></img>` : ''}
+                ${ (this.dead) ? html`<img class='dead' src='${ StaticRequestor.basePath }/WerewolfImages/Werewolf/dead.png'></img>` : ''}
             </div>
         `
     }

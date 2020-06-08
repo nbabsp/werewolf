@@ -1,6 +1,5 @@
 import { LitElement, html, css} from 'lit-element'
-
-let host = 'http://localhost:9615'
+import StaticRequestor from '../common/StaticRequestor'
 
 class SelectCard extends LitElement {
     static get properties() {
@@ -58,9 +57,9 @@ class SelectCard extends LitElement {
         return html`
             <div class='wrapper' @click=${ this.handleClick }>
                 <div class='card'>
-                    <img src=${ `${ host }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
+                    <img src=${ `${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
                 </div>
-                ${ (this.selected) ? html`<img class='selected' style='opacity:0.9' src='${ host }/WerewolfImages/Werewolf/check.png'></img>` : ''}
+                ${ (this.selected) ? html`<img class='selected' style='opacity:0.9' src='${ StaticRequestor.basePath }/WerewolfImages/Werewolf/check.png'></img>` : ''}
             </div>
         `
     }

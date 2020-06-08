@@ -1,6 +1,5 @@
 import { LitElement, html, css} from 'lit-element'
-
-let host = 'http://localhost:9615'
+import StaticRequestor from '../common/StaticRequestor'
 
 class BaseCard extends LitElement {
     static get properties() {
@@ -34,7 +33,7 @@ class BaseCard extends LitElement {
 
     render() {
         return html`
-            <img @click=${ this.handleClick } src=${ `${ host }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
+            <img @click=${ this.handleClick } src=${ `${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
         `
     }
 }
