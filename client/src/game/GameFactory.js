@@ -10,6 +10,7 @@ class Game {
         this.players = players
         this.player = player
         this.center = center
+        this.gameTime = 0
         this._timeObservers = []
         this._roleObservers = {}
         this.players.forEach(player => this._roleObservers[player.id] = [])
@@ -26,6 +27,7 @@ class Game {
 
     set time(time) {
         this._timeObservers.forEach(callback => callback(time))
+        this.gameTime = time
     }
 
     setRole(id, role) {

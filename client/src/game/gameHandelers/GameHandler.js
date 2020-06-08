@@ -12,7 +12,6 @@ let GameMasterRequestor = {
 let waitForStatusP = (gameId, playerId, status) => new Promise((resolve, reject) => {
     let source = GameMasterRequestor.statusSource(gameId, playerId)
     source.onmessage = (e) => {
-        console.log('got message', JSON.parse(e.data))
         let game = JSON.parse(e.data)
         if (game.status == status) {
             source.close()
@@ -83,6 +82,7 @@ class GameHandler {
         this._game.time = duration
         while(duration >= 0) {
             await waitP(1)
+            if (this._game.gameTime == 0) break
             duration = duration - 1
             this._game.time = duration
         }
@@ -101,7 +101,6 @@ class GameHandler {
         this._status = 'night action over'
         await waitForStatusP(this._game.id, this._player.id, 'day')
         this._endNightP()
-        console.log(this._game)
         this._status = 'day'
         console.log('day!')
         this._game.setDescription('discussion')
@@ -112,7 +111,9 @@ class GameHandler {
             this._game.setRole(id, 'selected')
             this._voteId = id
         }
-        await this.timerP(300) // countdown for discussion
+        this.timerP(300) // countdown for discussion
+        await waitForStatusP(this._game.id, this._player.id, 'endOfDay')
+        await this.timerP(0)
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
         let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'
@@ -140,8 +141,6 @@ class GameHandler {
         this._game.setRole('right', this._game.center['right'])
         this._game.setRole('lower', this._player.role)
 
-        console.log(this._game)
-
         let killed = []
 
         this._game.players.forEach( player => {
@@ -157,10 +156,7 @@ class GameHandler {
         
         killed.forEach( player => {
             if (player.role == 'hunter') {
-                console.log(player.votedId)
-                console.log(this._game.players)
                 let p = this._game.players.find(p => p.id == player.votedId)
-                console.log('hi2: ', p)
                 if(!killed.includes(p)) {
                     killed.push(p)
                 }

@@ -14,10 +14,8 @@ import GameHandlerHunter from './gameHandelers/GameHandlerHunter'
 class GameMaster {
     constructor (game, interaction) {
         this._game = game
-        console.log('startrole: ', this._game.player.startRole)
         switch (this._game.player.startRole) {
             case 'werewolf':
-                console.log('hi')
                 this._handler = new GameHandlerWerewolf(this._game)
                 break
             case 'minion':

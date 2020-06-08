@@ -7,16 +7,19 @@ class HostControls extends LitElement {
         return {
             deck: { type: Array },
             deckIds: { type: Array },
-            hidden: { type: Boolean }
+            hidden: { type: Boolean },
+            preGame: { type: Boolean }
         }
     }
 
     constructor() {
         super()
         this.startCallback = null
+        this.startVoteCallback = null
         this.deck = []
         this.deckIds = []
         this.hidden = true
+        this.preGame = true
     }
 
     static get styles() {
@@ -39,7 +42,7 @@ class HostControls extends LitElement {
                 color: #000000;
             }
 
-            .hideButton {
+            .cornerButton {
                 position: absolute;
                 width: 60px;
                 height: 38px;
@@ -58,8 +61,12 @@ class HostControls extends LitElement {
         `
     }
 
-    handleClick(event) {
+    handleStartClick(event) {
         if (this.startCallback) this.startCallback()
+    }
+
+    handleVoteClick(event) {
+        if (this.startVoteCallback) this.startVoteCallback()
     }
 
     handleSelectionClick(event) {
@@ -76,24 +83,23 @@ class HostControls extends LitElement {
             this.deck.push(event.detail.role)
             grid.selectedCard(event.detail.id, true)
         }
-        console.log(this.deck)
     }
 
     toggleHidden() {
         this.hidden = !this.hidden
     }
-
-    hide() {
-        this.hidden = true
-    }
     
     render() {
         return html`
             <div class='topBar' style='height:${this.hidden ? '46px' : '690px'}'>
-                ${ !this.hidden ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
-                    <cta-button class='startButton' text='START GAME' @click=${ this.handleClick }></cta-button>
-                    <div class='hideButton' @click=${ this.toggleHidden }>${this.hidden ? 'SELECT\nROLES' : 'HIDE\nROLES'}</div>                 
-            </div>
+                ${ this.preGame ? html`
+                    ${ !this.hidden ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
+                    <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
+                    <div class='cornerButton' @click=${ this.toggleHidden }>${this.hidden ? 'SELECT\nROLES' : 'HIDE\nROLES'}</div>
+                ` : html`
+                    <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
+                `}
+                </div>
         `
     }
 }

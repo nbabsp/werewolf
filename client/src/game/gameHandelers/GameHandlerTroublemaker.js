@@ -15,7 +15,7 @@ class GameHandlerTroublemaker extends GameHandler {
 
     async _nightClick(id) {
         let foundPlayer = this._game.players.find(player => player.id == id)
-        if (!this._doneSelecting && this._player.id != id && this.selectedOneId != id && foundPlayer) {
+        if (!this._doneSelecting && this._player.id != id && this._selectedOneId != id && foundPlayer) {
             if (this._selectedOneId) this._doneSelecting = true
             this._selectedOneId = id
             this._game.setRole(id, 'selected')

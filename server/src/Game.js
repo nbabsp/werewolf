@@ -76,9 +76,15 @@ class Game {
         }
     }
 
-    addListener(playerId, callback) {
+    async addListener(playerId, callback) {
         callback(this)
         this._handlers[playerId] = callback
+        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
+        while(this._handlers[playerId]) {
+            await waitP(15)
+            console.log('yeet')
+            callback(this)
+        }
     }
 
     removeListener(playerId) {

@@ -10,7 +10,7 @@ class GameHandlerWerewolf extends GameHandler {
 
     async _nightClick(id) {
         if (!this._doneLooking) {
-            if ((id == 'left' || id == 'center' || id == 'right')) {
+            if ((id == 'left' || id == 'center' || id == 'right') && !this._exposedIds.includes(id)) {
                 this._exposedIds.push(id)
                 this._exposeRole(id)
                 if (this._lookedAtOne) this._doneLooking = true

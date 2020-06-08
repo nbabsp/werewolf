@@ -56,7 +56,7 @@ app.get('/games/:gameId/status/:playerId', (req, res) => {
         'Content-Type': 'text/event-stream'
     });
     res.flushHeaders()
-
+    
     game.addListener(playerId, game => {
         res.write(`data: ${JSON.stringify(game.json)}\n\n`)
     })
@@ -65,6 +65,13 @@ app.get('/games/:gameId/status/:playerId', (req, res) => {
         console.log('closed from client', playerId)
         game.removeListener(playerId)
     })
+})
+
+app.get('/games/:gameId/voteNow', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    game.updateStatus('endOfDay')
+    _jsonResponse(res, {})
 })
 
 app.get('/games/:gameId', function(req, res) {

@@ -39,7 +39,6 @@ async function joinGameP(playerId) {
 let waitInLobbyP = (lobby, playerId, gameId) => new Promise((resolve, reject) => {
     let source = PlayerRequestor.statusSource(playerId, gameId)
     source.onmessage = (e) => {
-        console.log('got lobby message', JSON.parse(e.data))
         let game = JSON.parse(e.data)
         lobby.players = game.players
         if (game.status != 'creating') {

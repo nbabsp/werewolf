@@ -1,8 +1,8 @@
 import Requestor from './Requestor'
 
-let protocol = 'https'
-let host = 'werewolf.invades.space'
-let port = 80
+let protocol = 'http'
+let host = 'localhost'
+let port = 9615
 
 let StaticRequestor = {
     getP: (path) => Requestor.getP(host, port, path),
