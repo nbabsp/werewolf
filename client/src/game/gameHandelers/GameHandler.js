@@ -74,7 +74,7 @@ class GameHandler {
         let player = this._game.players.find(player => player.id == id)
         if (!player || id == this._voteId) return
         if (this._voteId) this._game.setRole(this._voteId, null)
-        this._game.setRole(id, 'selected2')
+        this._game.setRole(id, 'selected')
         this._voteId = id
     }
 
@@ -109,7 +109,7 @@ class GameHandler {
         let arr = this._game.players.filter(p => p.id != this._player.id)
         if (arr.length > 0) {
             let id = arr[Math.floor(Math.random() * arr.length)].id
-            this._game.setRole(id, 'selected2')
+            this._game.setRole(id, 'selected')
             this._voteId = id
         }
         await this.timerP(5) // countdown for discussion
@@ -129,6 +129,7 @@ class GameHandler {
             newPlayer = game.players.find(p => p.id == player.id)
             player.role = newPlayer.role
             player.votes = newPlayer.votes
+            player.votedId = newPlayer.votedId
             this._game.setRole(player.id, player.role)
             this._game.setVotes(player.id, player.votes)
         })
@@ -151,6 +152,18 @@ class GameHandler {
                 killed.push(player)
             } else if (player.votes.length == killed[0].votes.length) {
                 killed.push(player)
+            }
+        })
+        
+        killed.forEach( player => {
+            if (player.role == 'hunter') {
+                console.log(player.votedId)
+                console.log(this._game.players)
+                let p = this._game.players.find(p => p.id == player.votedId)
+                console.log('hi2: ', p)
+                if(!killed.includes(p)) {
+                    killed.push(p)
+                }
             }
         })
 

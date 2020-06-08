@@ -34,6 +34,7 @@ class GamePlayer {
         this.votes = []
         this.nightActionComplete = false
         this.voted = false
+        this.votedId = null
     }
 
     get json() {
@@ -44,7 +45,8 @@ class GamePlayer {
             role: this.role,
             votes: this.votes,
             nightActionComplete: this.nightActionComplete,
-            voted: this.voted
+            voted: this.voted,
+            votedId: this.votedId
         }
     }
 }
@@ -188,6 +190,7 @@ class Game {
         if (!votedPlayer) return false
         votedPlayer.votes.push(player.name)
         player.voted = true
+        player.votedId = votedId
         if (this.players.filter(player => player.voted).length == this.players.length) {
             this.vote()
         }

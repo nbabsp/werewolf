@@ -117,6 +117,7 @@ app.get('/games/:gameId/center/right', function(req, res) {
 app.post('/games/:gameId/start/:deck', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
+    if (game.players.length < 3) return _errorResponse(res, 'not enough players')
     let deck = JSON.parse(req.params.deck)
     if (!deck) return _errorResponse(res, 'bad deck')
     if (deck.length != (game.players.length + 3)) return _errorResponse(res, 'wrong number of cards')
