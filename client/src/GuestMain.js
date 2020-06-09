@@ -75,10 +75,18 @@ async function playP(playerId) {
     document.body.appendChild(main.element)
 
     let GM = new GameMaster(game, interaction)
-    await GM.playP()
+    if (await GM.playP()) {
+        main.element.remove()
+        playP(playerId)
+    }
 }
 
 async function mainP() {
+    window.addEventListener('beforeunload', function (e) {
+        e.preventDefault()
+        e.returnValue = ''
+    })
+    
     let name = await InputPopover.getP('REGISTER')
     let player = await PlayerRequestor.registerP(name)
     console.log('got player', player)

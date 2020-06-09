@@ -23,6 +23,7 @@ class Game {
         this._roleObservers.right = []
         this._roleObservers.lower = []
         this._descritionObservers = []
+        this._endGameObservers = []
     }
 
     set time(time) {
@@ -46,6 +47,10 @@ class Game {
         this._voteObservers[id].forEach(callback => callback(votes))
     }
 
+    setEndGame(endGame) {
+        this._endGameObservers.forEach(callback => callback(endGame))
+    }
+
     observeRole(id, callback) {
         this._roleObservers[id].push(callback)
     }
@@ -60,6 +65,10 @@ class Game {
 
     observeVotes(id, callback) {
         this._voteObservers[id].push(callback)
+    }
+
+    observeEndGame(callback) {
+        this._endGameObservers.push(callback)
     }
 
     observeTime(callback) {

@@ -14,7 +14,7 @@ class TextGrabber {
         box.className = 'grabberInput'
         box.setAttribute("type", "text");
         let button = createButton(buttonText, () => {
-            if(box.value) onText(box.value)
+            if(box.value && box.value.length <= 15) onText(box.value)
         })
         this.element = document.createElement('div')
         this.element.className = 'grabber'

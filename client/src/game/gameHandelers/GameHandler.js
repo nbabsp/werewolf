@@ -31,6 +31,7 @@ class GameHandler {
         this._status = 'unknown'
         this._voteId = null
         this._midClick = false
+        this._complete = false
     }
 
     _exposeRole(id) {
@@ -61,6 +62,9 @@ class GameHandler {
             case 'day':
                 this._dayClick(id)
                 break
+            case 'voted':
+                this._votedClick(id)
+                break
             default:
                 break
         }
@@ -75,6 +79,15 @@ class GameHandler {
         if (this._voteId) this._game.setRole(this._voteId, null)
         this._game.setRole(id, 'selected')
         this._voteId = id
+    }
+
+    _votedClick(id) {
+        if (id == 'restart') {
+            console.log('complete Before', this._complete)
+            this._complete = true
+            console.log('complete After', this._complete)
+            return
+        }
     }
 
     async timerP(duration) {
@@ -99,7 +112,8 @@ class GameHandler {
         while(this._midClick) await waitP(1)
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
         this._status = 'night action over'
-        await waitForStatusP(this._game.id, this._player.id, 'day')
+        let game = await waitForStatusP(this._game.id, this._player.id, 'day')
+        this._updateBoard(game)
         this._endNightP()
         this._status = 'day'
         console.log('day!')
@@ -113,17 +127,31 @@ class GameHandler {
         }
         this.timerP(300) // countdown for discussion
         await waitForStatusP(this._game.id, this._player.id, 'endOfDay')
-        await this.timerP(0)
+        this.timerP(0)
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
-        let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
+        game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'
         console.log('voted!')
         this._endGameP(game)
+        this._game.setEndGame(true)
+        while(!this._complete) { 
+            await waitP(2)
+        }
+        return true
     }
 
     async _startNightP() {}
     async _endNightP() {}
     
+    _updateBoard(game) {
+        let newPlayer
+        this._game.players.forEach(player => {
+            newPlayer = game.players.find(p => p.id == player.id)
+            player.role = newPlayer.role
+        })
+        this._game.center = game.center
+    }
+
     _endGameP(game) {
         let newPlayer
         this._game.players.forEach(player => {

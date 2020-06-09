@@ -30,7 +30,7 @@ class HostControls extends LitElement {
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 30px;
+                height: 46px;
                 max-height: 100%;
                 box-shadow: 0px 0px 4px 2px #888888;
                 padding: 2px;

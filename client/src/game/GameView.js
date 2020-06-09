@@ -2,6 +2,7 @@ import './PlayerGrid'
 import './CenterCardGrid'
 import './LowerBox'
 import './GameView.css'
+import './RestartButton'
 
 class GameView {
     constructor(game, interaction) {
@@ -24,15 +25,20 @@ class GameView {
         this.lowerBox = document.createElement('lower-box')
         this.lowerBox.role = game.player.startRole
 
+        this.restartButton = document.createElement('restart-button')
+        this.restartButton.addEventListener('clicked', () => interaction.onClick('restart'))
+        game.observeEndGame(endGame => this.restartButton.hidden = !endGame)
+
         main.appendChild(this.playerGrid)
         main.appendChild(this.centerCardGrid)
         main.appendChild(this.lowerBox)
+        main.appendChild(this.restartButton)
         this.element = main
 
         game.observeTime((time) => this.lowerBox.time = time)
         game.observeRole('lower', role => this.lowerBox.exposeCard(role))
         game.observeDescription(role => this.lowerBox.changeDescription(role))
     }
-    }
+}
 
 export default GameView
