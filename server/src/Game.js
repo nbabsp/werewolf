@@ -11,20 +11,6 @@ let shuffle = inputArray => {
     return outputArray
 }
 
-let decks = [
-    null,
-    null,
-    null,
-    ['werewolf', 'robber', 'troublemaker', 'drunk', 'werewolf', 'villager'],
-    ['werewolf', 'insomniac', 'seer', 'mason', 'villager', 'villager', 'villager'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'mason', 'mason'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion', 'insomniac'],
-    ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager', 'villager', 'villager', 'mason', 'mason', 'minion', 'insomniac', 'tanner'],
-]
-
 class GamePlayer {
     constructor(player) {
         this.id = player.id
