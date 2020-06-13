@@ -4,7 +4,8 @@ import './InputPopover'
 class TextGrabber extends LitElement {
     static get properties() {
         return {
-            name: { type: String },
+            buttonText: { type: String },
+            instructionText: { type: String },
             onText: { type: Function }
         }
     }
@@ -24,7 +25,18 @@ class TextGrabber extends LitElement {
             line-height: 18px;
             color: #000000;
         }
-        
+
+        .grabberInstruction {
+            display: block;
+            width: 100%;
+            height: 20px;
+            padding-top: 2px;
+            margin: 0 auto;
+            background-color: #EEEEEE;
+            color: #000000;
+            text-align: center;
+        }
+
         .grabberInput {
             display: block;
             width: 300px;
@@ -48,6 +60,7 @@ class TextGrabber extends LitElement {
     constructor() {
         super()
         this.buttonText = ''
+        this.instructionText = ''
         this.onText = null
     }
 
@@ -61,6 +74,7 @@ class TextGrabber extends LitElement {
     render() {
         return html`
             <div class='grabber'>
+                <div class='grabberInstruction'>${ this.instructionText }</div>
                 <input type='text' id='box' class='grabberInput'></input>
                 <div class='grabberButton' @click=${ this.onClick }>${ this.buttonText }</div>
             </div>

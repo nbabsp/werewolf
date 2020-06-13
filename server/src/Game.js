@@ -1,3 +1,5 @@
+const GamePlayer = require('./GamePlayer')
+
 const crypto = require('crypto')
 
 let generateId = () => crypto.randomBytes(8).toString('hex')
@@ -9,32 +11,6 @@ let shuffle = inputArray => {
         outputArray.push(arr.splice(Math.floor(arr.length * Math.random()), 1)[0])
     }
     return outputArray
-}
-
-class GamePlayer {
-    constructor(player) {
-        this.id = player.id
-        this.name = player.name
-        this.startRole = null
-        this.role = null
-        this.votes = []
-        this.nightActionComplete = false
-        this.voted = false
-        this.votedId = null
-    }
-
-    get json() {
-        return {
-            id: this.id,
-            name: this.name,
-            startRole: this.startRole,
-            role: this.role,
-            votes: this.votes,
-            nightActionComplete: this.nightActionComplete,
-            voted: this.voted,
-            votedId: this.votedId
-        }
-    }
 }
 
 class Game {

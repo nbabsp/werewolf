@@ -9,7 +9,8 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
         context.sendJSON(res, gameDatabase.create(req.body.name))
     })
 
-    context.app.get('/games/find/:playerId', (req, res) => {
+    context.app.get('/games/find/:gameName/:playerId', (req, res) => {
+        let gameName = req.params.gameName
         let playerId = req.params.playerId
         let player = playerDatabase.get(req.params.playerId)
         if (!player) return context.sendError(res, 'unregistered playerId in find')
@@ -21,7 +22,7 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
         });
         res.flushHeaders()
 
-        gameDatabase.addListener(playerId, game => {
+        gameDatabase.addListener(gameName, playerId, game => {
             console.log('observed', game)
             game.join(player)
             res.write(`data: ${game.id}\n\n`)

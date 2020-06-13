@@ -6,8 +6,8 @@ class GameDatabase {
         this._handlers = {}
     }
 
-    addListener(playerId, callback) {
-        let game = this._games.find(game => game.status == 'creating')
+    addListener(gameName, playerId, callback) {
+        let game = this._games.find(game => game.name == gameName && game.status == 'creating')
         if (game) {
             callback(game)
         }
@@ -23,6 +23,10 @@ class GameDatabase {
 
     get(id) {
         return this._games.find(game => game.id == id)
+    }
+
+    getByName(name) {
+        return this._games.find(game => game.name == name)
     }
 
     create(name) {

@@ -8,9 +8,27 @@ let HostRequestor = {
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
 }
 
-async function hostGameP(gameId, deck, deckIds) {
+async function createGameP() {
+    let lobby = document.createElement('host-controls')
+    lobby.status = 'beforeGame'
+    lobby.createCallback = async (gameName) => {
+        try {
+            let game = await HostRequestor.createP(gameName)
+            lobby.remove()
+            console.log('Creating Game')
+            return await hostGameP(game.id, gameName, [], [])
+        } catch (e) {
+            console.log('Error: ', e)
+        }
+    }
+    document.body.appendChild(lobby)
+
+}
+
+async function hostGameP(gameId, gameName, deck, deckIds) {
     console.log('hosting game:', gameId)
     let lobby = document.createElement('host-controls')
+    lobby.name = gameName
     lobby.deck = deck
     lobby.deckIds = deckIds
     lobby.startCallback = async () => {
@@ -35,8 +53,8 @@ async function hostGameP(gameId, deck, deckIds) {
         try {
             lobby.remove()
             await HostRequestor.clearP()
-            let game = await HostRequestor.createP('New Game')
-            return (await hostGameP(game.id, lobby.deck, lobby.deckIds))
+            let game = await HostRequestor.createP(gameName)
+            return (await hostGameP(game.id, gameName, lobby.deck, lobby.deckIds))
         } catch (e) {
             console.log('Error: ', e)
         }
@@ -47,8 +65,7 @@ async function hostGameP(gameId, deck, deckIds) {
 
 async function mainP() {
     await HostRequestor.clearP()
-    let game = await HostRequestor.createP('New Game')
-    await hostGameP(game.id, [], [])
+    await createGameP()
 }
 
 export default mainP

@@ -5,6 +5,7 @@ import './SelectionGrid'
 class HostControls extends LitElement {
     static get properties() {
         return {
+            name: { type: String },
             deck: { type: Array },
             deckIds: { type: Array },
             hiddenRoles: { type: Boolean },
@@ -14,8 +15,11 @@ class HostControls extends LitElement {
 
     constructor() {
         super()
+        this.createCallback = null
         this.startCallback = null
         this.startVoteCallback = null
+        this.startRestartCallback = null
+        this.name = ''
         this.deck = []
         this.deckIds = []
         this.hiddenRoles = true
@@ -42,6 +46,29 @@ class HostControls extends LitElement {
                 color: #000000;
             }
 
+            .infoText {
+                display: block;
+                width: 300px;
+                background-color: #77FF77;
+                text-align: center;
+                margin: 10px auto 10px auto;
+            }
+
+            .nameInput {
+                display: block;
+                width: 300px;
+                margin: 10px auto 10px auto;
+            }
+
+            .name {
+                position: absolute;
+                width: 60px;
+                left: 10px;
+                top: 15px;
+                color: #000000;
+                text-align: center;
+            }
+
             .cornerButton {
                 position: absolute;
                 width: 60px;
@@ -59,6 +86,11 @@ class HostControls extends LitElement {
                 margin-top: 12px;
             }
         `
+    }
+
+    handleCreateClick(event) {
+        let input = this.shadowRoot.getElementById('input')
+        if (this.createCallback && input) this.createCallback(input.value)
     }
 
     handleStartClick(event) {
@@ -95,8 +127,13 @@ class HostControls extends LitElement {
     
     render() {
         return html`
-            <div class='topBar' style='height:${this.hiddenRoles ? '46px' : '690px'}'>
-                ${ this.status == 'preGame' ? html`
+            <div class='topBar' style='height:${this.status == 'beforeGame' ? '100px' : this.hiddenRoles ? '46px' : '690px'}'>
+                <div class='name'>${ this.name }</div>
+                ${  this.status == 'beforeGame' ? html`
+                        <div class='infoText'>NAME OF NEW GAME</div>
+                        <input type='text' id='input' class='nameInput'></input>
+                        <cta-button class='startButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
+                ` : this.status == 'preGame' ? html`
                         ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
                         <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
                         <div class='cornerButton' @click=${ this.toggleHidden }>${this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES'}</div>

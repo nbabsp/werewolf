@@ -1,8 +1,9 @@
 import './TextGrabber'
 
 let InputPopover = {
-    getP: (action) => new Promise((resolve, reject) => {
+    getP: (instruction, action) => new Promise((resolve, reject) => {
         let grabber = document.createElement('text-grabber')
+        grabber.instructionText = instruction
         grabber.buttonText = action
         grabber.onText = (name) => {
             grabber.remove()
