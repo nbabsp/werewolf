@@ -70,6 +70,8 @@ class Game {
     }
 
     start(deck) {
+        if (this.players.length < 3) throw 'not enough players'
+        if (deck.length != (game.players.length + 3)) throw 'wrong number of cards'
         this.deal(deck)
         this.updateStatus('night')
     }

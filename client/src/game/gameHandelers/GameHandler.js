@@ -83,9 +83,7 @@ class GameHandler {
 
     _votedClick(id) {
         if (id == 'restart') {
-            console.log('complete Before', this._complete)
             this._complete = true
-            console.log('complete After', this._complete)
             return
         }
     }

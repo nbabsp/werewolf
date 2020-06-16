@@ -89,7 +89,7 @@ async function mainP() {
         e.returnValue = ''
     })
     
-    let gameName = await InputPopover.getP('Input game name', 'JOIN GAME')
+    let gameName = await InputPopover.getP('Input game name', 'FIND GAME')
     let foundGame = await PlayerRequestor.gameExistsP(gameName)
     while(!foundGame) {
         console.log('Game does not exist')

@@ -38,8 +38,8 @@ class GameDatabase {
         return game
     }
 
-    clear() {
-        this._games = []
+    clear(gameId) {
+        this._games = this._games.filter(game => this.game.id != gameId)
     }
 }
 

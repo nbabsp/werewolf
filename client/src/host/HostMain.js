@@ -3,7 +3,7 @@ import './HostControls'
 
 let HostRequestor = {
     createP: (name) => StaticRequestor.postP('/games/create', {name: name}),
-    clearP: () => StaticRequestor.postP(`/games/clear`),
+    clearP: (gameId) => StaticRequestor.postP(`/games/clear/${gameId}`),
     startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
 }
@@ -52,7 +52,7 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
     lobby.startRestartCallback = async () => {
         try {
             lobby.remove()
-            await HostRequestor.clearP()
+            await HostRequestor.clearP(gameId)
             let game = await HostRequestor.createP(gameName)
             return (await hostGameP(game.id, gameName, lobby.deck, lobby.deckIds))
         } catch (e) {
@@ -64,7 +64,6 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
 }
 
 async function mainP() {
-    await HostRequestor.clearP()
     await createGameP()
 }
 
