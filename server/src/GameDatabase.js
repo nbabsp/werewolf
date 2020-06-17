@@ -32,6 +32,7 @@ class GameDatabase {
     create(name) {
         let game = new Game(name)
         this._games.push(game)
+        console.log('After create:', this._games)
 
         // notify handlers that we have an available game
         Object.values(this._handlers).forEach(callback => callback(game))
@@ -39,7 +40,8 @@ class GameDatabase {
     }
 
     clear(gameId) {
-        this._games = this._games.filter(game => this.game.id != gameId)
+        this._games = this._games.filter(game => game.id != gameId)
+        console.log('After clear:', this._games)
     }
 }
 

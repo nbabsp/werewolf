@@ -1,8 +1,9 @@
 import StaticRequestor from '../common/StaticRequestor'
+import ErrorPopup from '../common/ErrorPopup'
 import './HostControls'
 
 let HostRequestor = {
-    createP: (name) => StaticRequestor.postP('/games/create', {name: name}),
+    createP: (name) => StaticRequestor.postP(`/games/create/${name}`),
     clearP: (gameId) => StaticRequestor.postP(`/games/clear/${gameId}`),
     startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
@@ -38,6 +39,7 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
             lobby.status = 'voting'
             console.log('Starting Game', gameId)
         } catch (e) {
+            ErrorPopup.post(e.error.err)
             console.log('Error: ', e)
         }
     }

@@ -16,7 +16,7 @@ class CenterCardGrid extends LitElement {
             margin: auto;
             display: flex;
             padding-left: 45px;
-            padding-right: 45px;
+            padding-right: 145px;
             padding-bottom: 10px;
             padding-top: 10px;
             box-sizing: border-box;

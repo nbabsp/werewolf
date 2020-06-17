@@ -14,7 +14,8 @@ class BasePlayer extends LitElement {
 
     static get styles() {
         return css`
-        :host {
+        .basePlayer {
+            position: relative;
             display: inline-block;
             margin: 10px;
             vertical-align: top;
@@ -23,19 +24,19 @@ class BasePlayer extends LitElement {
         }
 
         .name {
-            width: 100px;
+            width: 100%;
             height: 20px;
+            top: 137px;
             margin-top: 5px;
             background-color: #36393E;
             color: #FFFFFF;
             display: block;
             text-align: center;
-            position: relative;
+            position: absolute;
         }
 
         .votes {
-            width: 100px;
-            height: 20px;
+            width: 100%;
             margin-top: 5px;
             background-color: rgba(3, 3, 3, 0.5);
             color: #FFFFFF;
@@ -47,13 +48,9 @@ class BasePlayer extends LitElement {
         }
         
         .dead {
-            width: 100px;
-            height: 137px;
+            width: 100%;
+            height: 82%;
             z-index: 8;
-            position: absolute;
-        }
-
-        .card {
             position: absolute;
         }
         `
@@ -79,11 +76,9 @@ class BasePlayer extends LitElement {
 
     render() {
         return html`
-            <div id='basePlayer' style='background-color:${ this.dead ? '#FF0000' : '#777777' };position:relative'>
-                <div class='card'>    
-                    <base-card .role=${ this.role } @clicked=${ this.handleClick }></base-card>
-                    <div class='name'>${ this.player.name }</div>
-                </div>
+            <div id='basePlayer' class='basePlayer'>
+                <base-card .role=${ this.role } @clicked=${ this.handleClick }></base-card>
+                <div class='name'>${ this.player.name }</div>
                 ${ (this.votes.length > 0) ? html`<div class='votes'>${ this.listVotes() }</div>` : ''}
                 ${ (this.dead) ? html`<img class='dead' src='${ StaticRequestor.basePath }/WerewolfImages/Werewolf/dead.png'></img>` : ''}
             </div>

@@ -1,5 +1,6 @@
 import StaticRequestor from './common/StaticRequestor'
 import InputPopover from './common/InputPopover'
+import ErrorPopup from './common/ErrorPopup'
 import GameFactory from './game/GameFactory'
 import GameMaster from './game/GameMaster'
 import GameView from './game/GameView'
@@ -92,7 +93,7 @@ async function mainP() {
     let gameName = await InputPopover.getP('Input game name', 'FIND GAME')
     let foundGame = await PlayerRequestor.gameExistsP(gameName)
     while(!foundGame) {
-        console.log('Game does not exist')
+        ErrorPopup.postP('Game does not exist')
         gameName = await InputPopover.getP('Input game name', 'JOIN GAME')
         foundGame = await PlayerRequestor.gameExistsP(gameName)
     }

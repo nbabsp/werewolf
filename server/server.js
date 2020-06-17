@@ -42,6 +42,10 @@ PlayerRoutes(context, PM)
 let GM = new GameDatabase()
 HostRoutes(context, PM, GM)
 
+app.get('/', (req, res) => {
+    res.redirect('/join.html')
+})
+
 ///////////////////////////////////////////////////////// game
 app.get('/games/:gameId/status/:playerId', (req, res) => {
     let game = GM.get(req.params.gameId)

@@ -26,6 +26,16 @@ class HostControls extends LitElement {
         this.status = 'preGame'
     }
 
+    firstUpdated(changedProperties) {
+        let input = this.shadowRoot.getElementById('input')
+        let button = this.shadowRoot.getElementById('createButton')
+        if(input) {
+            input.addEventListener("keyup", function(event) {
+                if (event.keyCode == 13) button.click()
+            })    
+        }
+    }
+
     static get styles() {
         return css`
             .topBar {
@@ -49,7 +59,7 @@ class HostControls extends LitElement {
             .infoText {
                 display: block;
                 width: 300px;
-                background-color: #77FF77;
+                background-color: #77FFFF;
                 text-align: center;
                 margin: 10px auto 10px auto;
             }
@@ -62,7 +72,7 @@ class HostControls extends LitElement {
 
             .name {
                 position: absolute;
-                width: 60px;
+                width: 200px;
                 left: 10px;
                 top: 15px;
                 color: #000000;
@@ -90,7 +100,7 @@ class HostControls extends LitElement {
 
     handleCreateClick(event) {
         let input = this.shadowRoot.getElementById('input')
-        if (this.createCallback && input) this.createCallback(input.value)
+        if (this.createCallback && input.value) this.createCallback(input.value)
     }
 
     handleStartClick(event) {
@@ -132,7 +142,7 @@ class HostControls extends LitElement {
                 ${  this.status == 'beforeGame' ? html`
                         <div class='infoText'>NAME OF NEW GAME</div>
                         <input type='text' id='input' class='nameInput'></input>
-                        <cta-button class='startButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
+                        <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
                 ` : this.status == 'preGame' ? html`
                         ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
                         <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>

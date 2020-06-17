@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit-element'
-import './InputPopover'
+import ErrorPopup from './ErrorPopup'
 
 class TextGrabber extends LitElement {
     static get properties() {
@@ -64,19 +64,31 @@ class TextGrabber extends LitElement {
         this.onText = null
     }
 
+    firstUpdated(changedProperties) {
+        let input = this.shadowRoot.getElementById('box')
+        input.focus()
+        let button = this.shadowRoot.getElementById('btn')
+        input.addEventListener("keyup", function(event) {
+            if (event.keyCode == 13) button.click()
+        })    
+    }
+
     onClick() {
         let input = this.shadowRoot.getElementById('box')
-        if (input.value && input.value.length <= 15) {
+        if (input.value) {
             this.onText(input.value)
+        } else {
+            ErrorPopup.post('Input a name')
         }
     }
 
+      
     render() {
         return html`
             <div class='grabber'>
                 <div class='grabberInstruction'>${ this.instructionText }</div>
-                <input type='text' id='box' class='grabberInput'></input>
-                <div class='grabberButton' @click=${ this.onClick }>${ this.buttonText }</div>
+                <input type='text' id='box' maxlength='15' class='grabberInput'></input>
+                <div class='grabberButton' id='btn' @click=${ this.onClick }>${ this.buttonText }</div>
             </div>
         `
     }

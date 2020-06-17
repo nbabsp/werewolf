@@ -10,11 +10,16 @@ class BaseCard extends LitElement {
 
     static get styles() {
         return css`
+            :host {
+                position: absolute;
+                height: 137px;
+                width: 100px;
+            }
             img {
                 display: block;
                 margin: auto;
-                height: 137px;
-                width: 100px;
+                height: 100%;
+                width: 100%;
                 object-fit: contain;
                 cursor: pointer;
                 z-index: 1;

@@ -13,6 +13,7 @@ class SelectCard extends LitElement {
     static get styles() {
         return css`
             .wrapper {
+                position: relative;
                 display: inline-block;
                 margin: auto;
                 object-fit: contain;
@@ -23,21 +24,17 @@ class SelectCard extends LitElement {
             }
 
             img {
-                height: 137px;
-                width: 100px;
-                z-index: 1;
                 position: absolute;
+                height: 100%;
+                width: 100%;
+                z-index: 1;
             }
 
             .selected {
-                width: 100px;
-                height: 137px;
-                z-index: 8;
                 position: absolute;
-            }
-
-            .card {
-                postion: absolute;
+                height: 100$;
+                width: 100%;
+                z-index: 8;
             }
         `
     }
@@ -56,9 +53,7 @@ class SelectCard extends LitElement {
     render() {
         return html`
             <div class='wrapper' @click=${ this.handleClick }>
-                <div class='card'>
-                    <img src=${ `${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
-                </div>
+                <img src=${ `${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ this.role || 'back' }.png` }></img>
                 ${ (this.selected) ? html`<img class='selected' style='opacity:0.9' src='${ StaticRequestor.basePath }/WerewolfImages/Werewolf/check.png'></img>` : ''}
             </div>
         `
