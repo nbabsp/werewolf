@@ -10,7 +10,7 @@ let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
     playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
-    findGameSource: (name, playerId) => StaticRequestor.eventSource(`/games/find/${name}/${playerId}`),
+    findGameSource: (gameName, playerId) => StaticRequestor.eventSource(`/games/find/${gameName}/${playerId}`),
     statusSource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
     gameExistsP: (gameName) => StaticRequestor.getP(`/games/${gameName}/exists`)
 }
@@ -31,7 +31,9 @@ let findGameP = (gameName, playerId) => new Promise((resolve, reject) => {
 
 async function joinGameP(gameName, playerId) {
     let div = document.createElement('div')
-    div.appendChild(document.createTextNode('Looking for a Game...'))
+    div.appendChild(document.createTextNode('Waiting for host to restart game'))
+    div.style.textAlign = 'center'
+    div.style.margin = 'auto'
     document.body.appendChild(div)
     let gameId = await findGameP(gameName, playerId)
     div.remove()
@@ -93,7 +95,7 @@ async function mainP() {
     let gameName = await InputPopover.getP('Input game name', 'FIND GAME')
     let foundGame = await PlayerRequestor.gameExistsP(gameName)
     while(!foundGame) {
-        ErrorPopup.postP('Game does not exist')
+        ErrorPopup.post('Game does not exist')
         gameName = await InputPopover.getP('Input game name', 'JOIN GAME')
         foundGame = await PlayerRequestor.gameExistsP(gameName)
     }

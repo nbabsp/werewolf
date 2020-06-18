@@ -27,9 +27,9 @@ class ErrorDisplay extends LitElement {
         .grabberInstruction {
             display: block;
             width: 100%;
-            height: 20px;
+            height: 100%;
             padding-top: 2px;
-            margin: 11% auto;
+            margin: 10% auto;
             color: #FFFFFF;
             text-align: center;
         }

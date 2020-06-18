@@ -13,7 +13,7 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
     context.app.get('/games/find/:gameName/:playerId', (req, res) => {
         let gameName = req.params.gameName
         let playerId = req.params.playerId
-        let player = playerDatabase.get(req.params.playerId)
+        let player = playerDatabase.get(playerId)
         if (!player) return context.sendError(res, 'unregistered playerId in find')
 
         res.writeHead(200, {
@@ -35,7 +35,6 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
             gameDatabase.removeListener(playerId)
         })
     })
-
 }
 
 module.exports = HostRoutes

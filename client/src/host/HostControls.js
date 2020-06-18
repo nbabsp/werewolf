@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
 import '../components/CTAButton'
 import './SelectionGrid'
+import '../components/NameList'
 
 class HostControls extends LitElement {
     static get properties() {
@@ -8,7 +9,9 @@ class HostControls extends LitElement {
             name: { type: String },
             deck: { type: Array },
             deckIds: { type: Array },
+            names: { type: Array },
             hiddenRoles: { type: Boolean },
+            hiddenPlayers: { type: Boolean },
             status: { type: String }
         }
     }
@@ -22,7 +25,9 @@ class HostControls extends LitElement {
         this.name = ''
         this.deck = []
         this.deckIds = []
+        this.names = []
         this.hiddenRoles = true
+        this.hiddenPlayers = true
         this.status = 'preGame'
     }
 
@@ -48,7 +53,7 @@ class HostControls extends LitElement {
                 max-height: 100%;
                 box-shadow: 0px 0px 4px 2px #888888;
                 padding: 2px;
-                background-color: #FF7777;
+                background-color: #101060;
                 font-size: 14px;
                 font-family: arial, sans-serif;
                 font-weight: 100;
@@ -59,7 +64,8 @@ class HostControls extends LitElement {
             .infoText {
                 display: block;
                 width: 300px;
-                background-color: #77FFFF;
+                background-color: #5050aa;
+                color: #000000;
                 text-align: center;
                 margin: 10px auto 10px auto;
             }
@@ -75,13 +81,14 @@ class HostControls extends LitElement {
                 width: 200px;
                 left: 10px;
                 top: 15px;
-                color: #000000;
+                color: #FFFFFF;
                 text-align: center;
+                z-index: 9;
             }
 
             .cornerButton {
                 position: absolute;
-                width: 60px;
+                width: 65px;
                 height: 38px;
                 right: 10px;
                 top: 5px;
@@ -90,6 +97,7 @@ class HostControls extends LitElement {
                 color: #FFFFFF;
                 text-align: center;
                 cursor: pointer;
+                z-index: 9;
             }
 
             .startButton {
@@ -131,22 +139,46 @@ class HostControls extends LitElement {
         }
     }
 
-    toggleHidden() {
+    handleKickClick(event) {
+        let grid = this.shadowRoot.getElementById('selectedGrid')
+        if (this.deckIds.includes(event.detail.id)) {
+            let index = this.deckIds.indexOf(event.detail.id)
+            if (index !== -1) {
+                this.deckIds.splice(index, 1)
+                this.deck.splice(index, 1)
+                grid.selectedCard(event.detail.id, false)
+            }
+        } else {
+            this.deckIds.push(event.detail.id)
+            this.deck.push(event.detail.role)
+            grid.selectedCard(event.detail.id, true)
+        }
+    }
+
+    toggleHiddenRoles() {
         this.hiddenRoles = !this.hiddenRoles
+        this.hiddenPlayers = true
+    }
+
+    toggleHiddenPlayers() {
+        this.hiddenPlayers = !this.hiddenPlayers
+        this.hiddenRoles = true
     }
     
     render() {
         return html`
-            <div class='topBar' style='height:${this.status == 'beforeGame' ? '100px' : this.hiddenRoles ? '46px' : '690px'}'>
+            <div class='topBar' style='height:${ this.status == 'beforeGame' ? '100px' : !this.hiddenRoles ? '690px' : /*!this.hiddenPlayers ? `${ this.names.length * 30 + 46 }px`  :*/ '46px' }'>
                 <div class='name'>${ this.name }</div>
-                ${  this.status == 'beforeGame' ? html`
+                ${ this.status == 'beforeGame' ? html`
                         <div class='infoText'>NAME OF NEW GAME</div>
                         <input type='text' id='input' class='nameInput'></input>
                         <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
                 ` : this.status == 'preGame' ? html`
-                        ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${this.deckIds} @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
-                        <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
-                        <div class='cornerButton' @click=${ this.toggleHidden }>${this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES'}</div>
+                    ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${ this.deckIds } @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
+                    <!--${ !this.hiddenPlayers ? html`<name-list .names=${ this.names } @clicked=${ this.handleKickClick }></name-lists>`: '' } -->
+                    <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
+                    <div class='cornerButton' @click=${ this.toggleHiddenRoles }>${ this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES' }</div>
+                    <!-- <div class='cornerButton' style='margin-right:70px' @click=${ this.toggleHiddenPlayers }>${ this.hiddenPlayers ? 'SHOW\nPLAYERS' : 'HIDE\nPLAYERS' }</div> -->
                 ` : this.status == 'voting' ? html`
                         <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
                 ` : this.status == 'endGame' ? html`

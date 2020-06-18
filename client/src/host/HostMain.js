@@ -6,6 +6,7 @@ let HostRequestor = {
     createP: (name) => StaticRequestor.postP(`/games/create/${name}`),
     clearP: (gameId) => StaticRequestor.postP(`/games/clear/${gameId}`),
     startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
+    statusSource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
 }
 
@@ -32,6 +33,7 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
     lobby.name = gameName
     lobby.deck = deck
     lobby.deckIds = deckIds
+    lobby.names = ['John', 'Smith', 'Fred']
     lobby.startCallback = async () => {
         try {
             await HostRequestor.startP(gameId, lobby.deck)
@@ -61,7 +63,6 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
             console.log('Error: ', e)
         }
     }
-
     document.body.appendChild(lobby)
 }
 
