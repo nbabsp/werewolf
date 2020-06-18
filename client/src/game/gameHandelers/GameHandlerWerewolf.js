@@ -16,8 +16,12 @@ class GameHandlerWerewolf extends GameHandler {
 
     async _nightClick(id) {
         if (this._loneWolf && !this._peekedId && (id == 'left' || id == 'center' || id == 'right')) {
+            this._midClick = true
+            let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
             this._peekedId = id
             this._exposeRole(id)
+            await waitP(5)
+            this._midClick = false
         }
     }
 
@@ -25,6 +29,7 @@ class GameHandlerWerewolf extends GameHandler {
         this._werewolfIds = await GameMasterRequestor.werewolfP(this._game.id, this._player.id)
         this._werewolfIds.forEach(id => this._exposeRole(id))
         this._loneWolf = this._werewolfIds.length == 1
+        if (this._loneWolf) this._game.setDescription('loneWerewolf')
     }
 
     async _endNightP() {

@@ -50,7 +50,8 @@ class GameHandler {
     _hideRole(id) {
         this._game.setRole(id, null)
         if (id == this._player.id) {
-            this._game.setRole('lower', null)
+            this._game.setRole(id, 'myCard')
+            this._game.setRole('lower', 'myCard')
         }
     }
 
@@ -102,11 +103,13 @@ class GameHandler {
 
     async playP() {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
+        await waitP(0.5)
+        this._game.setRole(this._player.id, 'myCard')
         await this.timerP(5) // give players a chance to internalize their card
         console.log('night!')
         this._status = 'night'
         this._startNightP()
-        await this.timerP(10) // give players a chance to perform their action
+        await this.timerP(30) // give players a chance to perform their action
         while(this._midClick) await waitP(1)
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
         this._status = 'night action over'
@@ -135,7 +138,7 @@ class GameHandler {
         while(!this._complete) { 
             await waitP(2)
         }
-        return true
+        return
     }
 
     async _startNightP() {}

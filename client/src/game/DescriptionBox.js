@@ -2,6 +2,7 @@ import { LitElement, html, css} from 'lit-element'
 
 let descriptions = {
     werewolf: 'Look for other Werewolves',
+    loneWerewolf: 'Look at a center card',
     minion: 'Look for the Werewolves',
     mason: 'Look for other Masons',
     seer: 'Look at another player\'s card or two center cards',

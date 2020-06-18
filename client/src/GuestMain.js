@@ -80,10 +80,9 @@ async function playP(gameName, playerId) {
     document.body.appendChild(main.element)
 
     let GM = new GameMaster(game, interaction)
-    if (await GM.playP()) {
-        main.element.remove()
-        playP(gameName, playerId)
-    }
+    await GM.playP()
+    main.element.remove()
+    playP(gameName, playerId)
 }
 
 async function mainP() {

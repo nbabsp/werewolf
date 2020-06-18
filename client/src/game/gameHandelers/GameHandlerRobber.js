@@ -28,7 +28,7 @@ class GameHandlerRobber extends GameHandler {
             this._exposeRole(id)
             this._exposeRole(this._player.id)
             GameMasterRequestor.robberP(this._game.id, this._player.id, this._swapIds)
-            await waitP(2)
+            await waitP(5)
             this._midClick = false
         }
     }
