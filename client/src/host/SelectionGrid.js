@@ -1,5 +1,5 @@
 import { LitElement, html, css} from 'lit-element'
-import './SelectCard'
+import './RoleToken'
 
 class SelectionGrid extends LitElement {
     static get properties() {
@@ -12,9 +12,8 @@ class SelectionGrid extends LitElement {
     static get styles() {
         return css`
         :host {
-            background-color: #777777;
             display: block;
-            width: 492px;
+            width: 75%;
             margin: auto;
             z-index: 9;
         }
@@ -54,7 +53,7 @@ class SelectionGrid extends LitElement {
 
     render() {
         return html`
-            <div styles='height:${ 182 * (this.cards.length % 4 + 1) }px'>${this.cards.map(card => html`<select-card id=${ card.id } .role=${ card.role } .id=${ card.id } .selected=${ this.selected.includes(card.id)} @clicked=${ this.cardClicked }/>`)}</div>
+            <div>${this.cards.map(card => html`<role-token id=${ card.id } .role=${ card.role } .id=${ card.id } .selected=${ this.selected.includes(card.id)} @clicked=${ this.cardClicked }/>`)}</div>
         `
     }
 }

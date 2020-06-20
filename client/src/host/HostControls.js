@@ -46,10 +46,11 @@ class HostControls extends LitElement {
             .topBar {
                 overflow: auto;
                 position: absolute;
+                display: flex;
+                flex-wrap: wrap;
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 46px;
                 max-height: 100%;
                 box-shadow: 0px 0px 4px 2px #888888;
                 padding: 2px;
@@ -77,9 +78,11 @@ class HostControls extends LitElement {
             }
 
             .name {
-                position: absolute;
-                width: 200px;
-                left: 10px;
+                position: relative;
+                display: inline-block;
+                width: 65px;
+                float: left;
+                margin-left: 10px;
                 top: 15px;
                 color: #FFFFFF;
                 text-align: center;
@@ -87,10 +90,12 @@ class HostControls extends LitElement {
             }
 
             .cornerButton {
-                position: absolute;
+                position: relative;
+                display: inline-block;
                 width: 65px;
                 height: 38px;
-                right: 10px;
+                margin-left: auto;
+                margin-right: 10px;
                 top: 5px;
                 padding-top: 2px;
                 background-color: #36393E;
@@ -101,7 +106,11 @@ class HostControls extends LitElement {
             }
 
             .startButton {
+                position: relative;
+                margin: auto;
                 margin-top: 12px;
+                margin-bottom: 12px;
+                text-align: center;
             }
         `
     }
@@ -167,20 +176,23 @@ class HostControls extends LitElement {
     
     render() {
         return html`
-            <div class='topBar' style='height:${ this.status == 'beforeGame' ? '100px' : !this.hiddenRoles ? '690px' : /*!this.hiddenPlayers ? `${ this.names.length * 30 + 46 }px`  :*/ '46px' }'>
+            <div class='topBar'>
                 <div class='name'>${ this.name }</div>
-                ${ this.status == 'beforeGame' ? html`
-                        <div class='infoText'>NAME OF NEW GAME</div>
-                        <input type='text' id='input' class='nameInput'></input>
-                        <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
+                ${  this.status == 'beforeGame' ? html`
+                        <div style='width:100%;display:block;'>
+                            <div class='infoText'>NAME OF NEW GAME</div>
+                            <input type='text' id='input' class='nameInput'></input>
+                            <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
+                        </div>
                 ` : this.status == 'preGame' ? html`
-                    ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${ this.deckIds } @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
-                    <!--${ !this.hiddenPlayers ? html`<name-list .names=${ this.names } @clicked=${ this.handleKickClick }></name-lists>`: '' } -->
-                    <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
-                    <div class='cornerButton' @click=${ this.toggleHiddenRoles }>${ this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES' }</div>
-                    <!-- <div class='cornerButton' style='margin-right:70px' @click=${ this.toggleHiddenPlayers }>${ this.hiddenPlayers ? 'SHOW\nPLAYERS' : 'HIDE\nPLAYERS' }</div> -->
+                        <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
+                        <div class='cornerButton' @click=${ this.toggleHiddenRoles }>${ this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES' }</div>
+                        <div style='display:block;flex-basis:100%;'>
+                            ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${ this.deckIds } @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
+                        </div>
                 ` : this.status == 'voting' ? html`
                         <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
+                        <div style='display:block;flex-basis:100%;'>
                 ` : this.status == 'endGame' ? html`
                         <div class = cornerButton @click=${ this.handleRestartClick }>NEW\nGAME</div>
                 ` : '' }
