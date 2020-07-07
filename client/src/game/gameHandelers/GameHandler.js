@@ -1,4 +1,5 @@
 import StaticRequestor from '../../common/StaticRequestor'
+import Stopwatch from '../../common/Stopwatch'
 
 let GameMasterRequestor = {    
     voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
@@ -31,7 +32,7 @@ class GameHandler {
         this._status = 'unknown'
         this._voteId = null
         this._midClick = false
-        this._complete = false
+        this._sw = new Stopwatch()
     }
 
     _exposeRole(id) {
@@ -89,33 +90,46 @@ class GameHandler {
         }
     }
 
-    async timerP(duration) {
-        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
-        this._game.time = duration
-        while(duration >= 0) {
-            await waitP(1)
-            if (this._game.gameTime == 0) break
-            duration = duration - 1
-            this._game.time = duration
-        }
-        this._game.time = null
+    startTimer(duration) {
+        return new Promise(async (resolve) => {
+            this._sw.start(count => {
+                this._game.time = duration - count > 0 ? duration - count : 0
+                if (duration - count <= 0) {
+                    this._sw.stop()
+                    resolve()
+                }
+            })
+        })
     }
 
-    async playP() {
+    stopTimer() {
+        this._sw.stop()
+    }
+
+    async preparePhaseP() {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
         await waitP(0.5)
         this._game.setRole(this._player.id, 'myCard')
-        await this.timerP(5) // give players a chance to internalize their card
-        console.log('night!')
+        await this.startTimer(5) // give players a chance to internalize their card
+    }
+
+    async nightPhaseP() {
+        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
+        
         this._status = 'night'
+        console.log('night!')
         this._startNightP()
-        await this.timerP(30) // give players a chance to perform their action
+        await this.startTimer(30) // give players a chance to perform their action
         while(this._midClick) await waitP(1)
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
+
         this._status = 'night action over'
         let game = await waitForStatusP(this._game.id, this._player.id, 'day')
         this._updateBoard(game)
-        this._endNightP()
+        await this._endNightP()
+    }
+
+    async discussionPhaseP() {
         this._status = 'day'
         console.log('day!')
         this._game.setDescription('discussion')
@@ -126,19 +140,31 @@ class GameHandler {
             this._game.setRole(id, 'selected')
             this._voteId = id
         }
-        this.timerP(300) // countdown for discussion
+        this.startTimer(300) // countdown for discussion
         await waitForStatusP(this._game.id, this._player.id, 'endOfDay')
-        this.timerP(0)
+        this.stopTimer()
+        this._game.time = 0
+    }
+
+    async endPhaseP() {
+        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
+
         await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
-        game = await waitForStatusP(this._game.id, this._player.id, 'voted')
+        let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'
         console.log('voted!')
-        this._endGameP(game)
+        this._endGame(game)
         this._game.setEndGame(true)
         while(!this._complete) { 
             await waitP(2)
         }
-        return
+    }
+
+    async playP() {        
+        await this.preparePhaseP()
+        await this.nightPhaseP()
+        await this.discussionPhaseP()
+        await this.endPhaseP()
     }
 
     async _startNightP() {}
@@ -153,7 +179,7 @@ class GameHandler {
         this._game.center = game.center
     }
 
-    _endGameP(game) {
+    _endGame(game) {
         let newPlayer
         this._game.players.forEach(player => {
             newPlayer = game.players.find(p => p.id == player.id)
