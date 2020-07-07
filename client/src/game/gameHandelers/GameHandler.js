@@ -90,7 +90,7 @@ class GameHandler {
         }
     }
 
-    async startTimer(duration) {
+    startTimer(duration) {
         return new Promise(async (resolve) => {
             this._sw.start(count => {
                 this._game.time = duration - count > 0 ? duration - count : 0
@@ -126,7 +126,7 @@ class GameHandler {
         this._status = 'night action over'
         let game = await waitForStatusP(this._game.id, this._player.id, 'day')
         this._updateBoard(game)
-        this._endNightP()
+        await this._endNightP()
     }
 
     async discussionPhaseP() {
@@ -153,7 +153,7 @@ class GameHandler {
         let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
         this._status = 'voted'
         console.log('voted!')
-        this._endGameP(game)
+        this._endGame(game)
         this._game.setEndGame(true)
         while(!this._complete) { 
             await waitP(2)
@@ -165,8 +165,6 @@ class GameHandler {
         await this.nightPhaseP()
         await this.discussionPhaseP()
         await this.endPhaseP()
-
-        return
     }
 
     async _startNightP() {}
@@ -181,7 +179,7 @@ class GameHandler {
         this._game.center = game.center
     }
 
-    _endGameP(game) {
+    _endGame(game) {
         let newPlayer
         this._game.players.forEach(player => {
             newPlayer = game.players.find(p => p.id == player.id)
