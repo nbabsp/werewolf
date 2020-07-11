@@ -1,6 +1,32 @@
 import StaticRequestor from '../../common/StaticRequestor'
 import Stopwatch from '../../common/Stopwatch'
 
+class Timer {
+    constructor(duration, onTime, onEnd) {
+        this._sw = new Stopwatch()
+        this._duration = duration
+        this._onTime = onTime
+        this._onEnd = onEnd
+    }
+
+    start() {
+        this._sw.start(ticks => {
+            let time = this._duration - ticks > 0 ? this._duration - ticks : 0
+            if (this._onTime) this._onTime(time)
+            if (time == 0) {
+                this._sw.stop()
+                if (this._onEnd) this._onEnd()
+            }
+        })
+    }
+
+    cancel() {
+        this._sw.stop()
+        if (this._onTime) this._onTime(0)
+        if (this._onEnd) this._onEnd()
+    }
+}
+
 let GameMasterRequestor = {    
     voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
     votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted`),
@@ -32,7 +58,6 @@ class GameHandler {
         this._status = 'unknown'
         this._voteId = null
         this._midClick = false
-        this._sw = new Stopwatch()
     }
 
     _exposeRole(id) {
@@ -90,27 +115,22 @@ class GameHandler {
         }
     }
 
-    startTimer(duration) {
-        return new Promise(async (resolve) => {
-            this._sw.start(count => {
-                this._game.time = duration - count > 0 ? duration - count : 0
-                if (duration - count <= 0) {
-                    this._sw.stop()
-                    resolve()
-                }
-            })
-        })
+    _startTimer(duration, onEnd) {
+        if (this._timer) this._cancelTimer()
+        this._timer = new Timer(duration, time => this._game.time = time, onEnd)
+        this._timer.start()
     }
 
-    stopTimer() {
-        this._sw.stop()
+    _cancelTimer() {
+        if (this._timer) this._timer.cancel()
+        this._timer = null
     }
 
     async preparePhaseP() {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
         await waitP(0.5)
         this._game.setRole(this._player.id, 'myCard')
-        await this.startTimer(5) // give players a chance to internalize their card
+        await new Promise(resolve => this._startTimer(5, resolve)) // give players a chance to internalize their card
     }
 
     async nightPhaseP() {
@@ -119,7 +139,7 @@ class GameHandler {
         this._status = 'night'
         console.log('night!')
         this._startNightP()
-        await this.startTimer(30) // give players a chance to perform their action
+        await new Promise(resolve => this._startTimer(30, resolve)) // give players a chance to perform their action
         while(this._midClick) await waitP(1)
         await GameMasterRequestor.endNightActionP(this._game.id, this._player.id)
 
@@ -140,10 +160,9 @@ class GameHandler {
             this._game.setRole(id, 'selected')
             this._voteId = id
         }
-        this.startTimer(300) // countdown for discussion
+        this._startTimer(300) // countdown for discussion
         await waitForStatusP(this._game.id, this._player.id, 'endOfDay')
-        this.stopTimer()
-        this._game.time = 0
+        this._cancelTimer()
     }
 
     async endPhaseP() {
