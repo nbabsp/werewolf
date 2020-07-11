@@ -32,7 +32,7 @@ let _authRequestP = function(host, port, method, path, headers, data) {
     headers = Object.assign({}, headers)
     let options = {
         method: method,
-        protocol: 'http:',
+        protocol: (process.env.HOST == 'local') ? 'http:' : 'https:',
         host: host,
         port: port,
         path: path,
