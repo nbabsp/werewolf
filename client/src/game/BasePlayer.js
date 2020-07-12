@@ -19,15 +19,15 @@ class BasePlayer extends LitElement {
             display: inline-block;
             vertical-align: top;
             width: 30%;
-            margin-left: 1%;
-            margin-right: 1%;
             margin-top: 2%;
             margin-bottom: 2%;
+            margin-left: 1%;
+            margin-right: 1%;
         }
 
         .name {
             width: 100%;
-            height: 3.2%;
+            height: 20px;
             display: flex;
             justify-content: center;
             align-items: center;margin-top: 5px;

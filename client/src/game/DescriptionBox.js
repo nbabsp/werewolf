@@ -37,6 +37,8 @@ class DescriptionBox extends LitElement {
             border-top-style: solid;
             border-right-style: solid;
             box-sizing: border-box;
+            font-size: clamp(12px, 3.8vw, 20px);
+            line-height: clamp(10px, 3.8vw, 20px);
         }
         `
     }

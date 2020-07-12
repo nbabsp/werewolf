@@ -14,19 +14,18 @@ class LowerBox extends LitElement {
     static get styles() {
         return css`
         :host {
-            display: block;
+            display: flex;
             margin: auto;
             width: 100%;
-            height: 19.3%;
         }
         .infoBox {
             background-color: #555555;
             color: #FFFFFF;
-            display: inline-block;
+            display: flex;
+            flex-direction: column;
             position: relative;
             text-align: center;
             width: 75%;
-            height: 100%;
             vertical-align: top;
         }
         .myCardWrapper {
@@ -34,7 +33,8 @@ class LowerBox extends LitElement {
             display: inline-block;
             height: 100%;
             max-height: 100%;
-            width: 25%;
+            width: 30%;
+            padding: 1%;
             border-width: 1px;
             border-color: #000000;
             border-left-style: solid;
