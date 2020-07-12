@@ -1,5 +1,8 @@
 .main {
-    padding-top: 50px;
+    width: 100%;
+    max-width: 430px;
+    margin: auto;
+    overflow: scroll;
     font-size: 14px;
     font-family: arial, sans-serif;
     font-weight: 100;

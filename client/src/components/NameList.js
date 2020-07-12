@@ -11,7 +11,7 @@ class NameList extends LitElement {
         return css`
             :host {
                 display: block;
-                width: 450px;
+                width: 100%;
                 padding-top: 5px;
                 padding-bottom: 5px;
                 margin: 0 auto;

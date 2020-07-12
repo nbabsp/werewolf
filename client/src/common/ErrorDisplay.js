@@ -22,6 +22,7 @@ class ErrorDisplay extends LitElement {
             font-weight: 100;
             line-height: 18px;
             color: #FFFFFF;
+            z-index: 9;
         }
 
         .grabberInstruction {

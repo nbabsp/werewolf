@@ -11,16 +11,16 @@ class CenterCardGrid extends LitElement {
         return css`
         :host {
             background-color: #444444;
-            width: 480px;
-            height: 157px;
-            margin: auto;
+            width: 100%;
             display: flex;
-            padding-left: 45px;
-            padding-right: 145px;
-            padding-bottom: 10px;
-            padding-top: 10px;
+            padding: 2%;
             box-sizing: border-box;
             justify-content: space-between;
+        }
+        .card {
+            width: 30%;
+            height: fit-content;
+            margin: 2%;
         }
         `
     }
@@ -46,9 +46,9 @@ class CenterCardGrid extends LitElement {
 
     render() {
         return html`
-            <div><base-card id=left @clicked=${ this.leftCardClicked }/></div>
-            <div><base-card id=center @clicked=${ this.centerCardClicked }/></div>
-            <div><base-card id=right @clicked=${ this.rightCardClicked }/></div>
+            <div class='card'><base-card id=left @clicked=${ this.leftCardClicked }/></div>
+            <div class='card'><base-card id=center @clicked=${ this.centerCardClicked }/></div>
+            <div class='card'><base-card id=right @clicked=${ this.rightCardClicked }/></div>
         `
     }
 }

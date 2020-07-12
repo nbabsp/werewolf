@@ -11,7 +11,7 @@ class CountDownTimer extends LitElement {
     static get styles() {
         return css`
         :host {
-            display: block;
+            display: flex;
             height: 50%;
             width: 100%;
             border-width: 1px;
@@ -19,8 +19,10 @@ class CountDownTimer extends LitElement {
             border-bottom-style: solid;
             border-right-style: solid;
             box-sizing: border-box;
-            padding-top: 8%;
-            font-size: 40px;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            line-height: 35px;
             cursor: pointer;
         }
         `
