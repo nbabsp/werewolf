@@ -16,8 +16,8 @@ class LowerBox extends LitElement {
         :host {
             display: block;
             margin: auto;
-            width: 480px;
-            height: 157px;
+            width: 100%;
+            height: 19.3%;
         }
         .infoBox {
             background-color: #555555;
@@ -25,22 +25,27 @@ class LowerBox extends LitElement {
             display: inline-block;
             position: relative;
             text-align: center;
-            width: 360px;
+            width: 75%;
             height: 100%;
             vertical-align: top;
         }
         .myCardWrapper {
             background-color: #555555;
             display: inline-block;
-            margin: auto;
-            padding: 10px;
-            height: 157px;
-            width: 120px;
+            height: 100%;
+            max-height: 100%;
+            width: 25%;
             border-width: 1px;
             border-color: #000000;
             border-left-style: solid;
             box-sizing: border-box;
-        }    
+        }
+        .card {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
         `
     }
 
@@ -76,7 +81,7 @@ class LowerBox extends LitElement {
                 <count-down-timer id='timer' time=${ this.time } @clicked=${ this.handleClick }></count-down-timer>
                 <description-box id='description' role=${ this.role }></description-box>
             </div><div class='myCardWrapper'>
-                        <base-card id='lower' .role=${ this.role }></base-card>
+                        <div class='card'><base-card id='lower' .role=${ this.role }></base-card></div>
                   </div>
         `
     }

@@ -11,6 +11,7 @@ let descriptions = {
     drunk: 'Swap your card with one of the center cards',
     insomniac: 'Look at your card at the end of the night phase',
     villager: 'Listen carefully',
+    hunter: 'Do nothing at night. If you die, who ever you point at also dies.',
     tanner: 'Don\'t die... or well... do die',
     discussion: 'Discuss the night phase',
     blank: ''
@@ -26,7 +27,9 @@ class DescriptionBox extends LitElement {
     static get styles() {
         return css`
         :host {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             height: 50%;
             width: 100%;
             border-width: 1px;
@@ -34,7 +37,6 @@ class DescriptionBox extends LitElement {
             border-top-style: solid;
             border-right-style: solid;
             box-sizing: border-box;
-            padding-top: 8%;
         }
         `
     }

@@ -17,40 +17,41 @@ class BasePlayer extends LitElement {
         .basePlayer {
             position: relative;
             display: inline-block;
-            margin: 10px;
             vertical-align: top;
-            height: 167px;
-            width: 100px;
+            width: 30%;
+            margin-left: 1%;
+            margin-right: 1%;
+            margin-top: 2%;
+            margin-bottom: 2%;
         }
 
         .name {
             width: 100%;
-            height: 20px;
-            top: 137px;
-            margin-top: 5px;
+            height: 3.2%;
+            display: flex;
+            justify-content: center;
+            align-items: center;margin-top: 5px;
             background-color: #36393E;
             color: #FFFFFF;
-            display: block;
-            text-align: center;
-            position: absolute;
+            position: relative;
         }
 
         .votes {
             width: 100%;
-            margin-top: 5px;
             background-color: rgba(3, 3, 3, 0.5);
             color: #FFFFFF;
             display: block;
             text-align: center;
-            top: 50px;
+            top: 34%;
             position: absolute;
-            z-index: 9;
+            z-index: 8;
         }
         
         .dead {
             width: 100%;
-            height: 82%;
-            z-index: 8;
+            height: 84%;
+            top: 0px;
+            z-index: 7;
             position: absolute;
         }
         `

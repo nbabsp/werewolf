@@ -13,8 +13,10 @@ class PlayerGrid extends LitElement {
         :host {
             background-color: #777777;
             display: block;
-            width: 480px;
+            width: 96%;
             margin: auto;
+            padding-left: 2%;
+            padding-right: 2%;
         }
         `
     }
@@ -45,7 +47,7 @@ class PlayerGrid extends LitElement {
 
     render() {
         return html`
-            <div styles='height:${ 182 * (this.players.length % 4 + 1) }px'>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
+            <div>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
         `
     }
 }

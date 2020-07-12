@@ -39,7 +39,7 @@ class TextGrabber extends LitElement {
 
         .grabberInput {
             display: block;
-            width: 300px;
+            width: 100%;
             margin: 20px auto 20px auto;
         }
         

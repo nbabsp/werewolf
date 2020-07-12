@@ -61,6 +61,7 @@ class HostControls extends LitElement {
                 font-weight: 100;
                 line-height: 18px;
                 color: #000000;
+                z-index: 9;
             }
 
             .infoText {
@@ -87,7 +88,7 @@ class HostControls extends LitElement {
                 top: 15px;
                 color: #FFFFFF;
                 text-align: center;
-                z-index: 9;
+                z-index: 8;
             }
 
             .cornerButton {
@@ -103,7 +104,7 @@ class HostControls extends LitElement {
                 color: #FFFFFF;
                 text-align: center;
                 cursor: pointer;
-                z-index: 9;
+                z-index: 8;
             }
 
             .cornerButton2 {
@@ -119,7 +120,7 @@ class HostControls extends LitElement {
                 color: #FFFFFF;
                 text-align: center;
                 cursor: pointer;
-                z-index: 9;
+                z-index: 8;
             }
 
             .startButton {

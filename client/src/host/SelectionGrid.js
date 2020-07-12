@@ -15,7 +15,7 @@ class SelectionGrid extends LitElement {
             display: block;
             width: 75%;
             margin: auto;
-            z-index: 9;
+            z-index: 8;
         }
         `
     }
