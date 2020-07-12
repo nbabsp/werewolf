@@ -17,7 +17,6 @@ class BaseCard extends LitElement {
             img {
                 display: block;
                 margin: auto;
-                height: 100%;
                 width: 100%;
                 object-fit: contain;
                 cursor: pointer;

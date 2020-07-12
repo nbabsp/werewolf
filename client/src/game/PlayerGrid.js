@@ -15,8 +15,7 @@ class PlayerGrid extends LitElement {
             display: block;
             width: 96%;
             margin: auto;
-            padding-left: 2%;
-            padding-right: 2%;
+            padding: 2%;
         }
         `
     }

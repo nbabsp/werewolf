@@ -21,8 +21,8 @@ class CountDownTimer extends LitElement {
             box-sizing: border-box;
             align-items: center;
             justify-content: center;
-            font-size: 35px;
-            line-height: 35px;
+            font-size: clamp(10px, 10vw, 40px);
+            line-height: clamp(10px, 9vw, 40px);
             cursor: pointer;
         }
         `
