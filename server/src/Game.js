@@ -54,6 +54,13 @@ class Game {
         console.log('game hand', this._handlers)
     }
 
+    cleanup() {
+        this.players.forEach( player => {
+            if (this._handlers[player.id]) delete this._handlers[player.id]
+        })
+        console.log('game hand', this._handlers)
+    }
+
     join(player) {
         if (this.players.find((current) => current.id == player.id)) {
             console.log('player already in game')

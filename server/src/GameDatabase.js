@@ -40,7 +40,9 @@ class GameDatabase {
     }
 
     clear(gameId) {
-        this._games = this._games.filter(game => game.id != gameId)
+        let game = this._games.find(game => game.id == gameId)
+        game.cleanup()
+        this._games.splice(this._games.indexOf(game), 1)
         console.log('After clear:', this._games)
     }
 }

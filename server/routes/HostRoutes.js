@@ -2,7 +2,7 @@ let HostRoutes = function(context, playerDatabase, gameDatabase) {
 
     context.app.post('/games/clear/:gameId', function(req, res) {
         if (!req.params.gameId) return context.sendError(res, 'bad game id')
-        context.sendJSON(res, gameDatabase.clear(req.body.gameId))
+        context.sendJSON(res, gameDatabase.clear(req.params.gameId))
     })
 
     context.app.post('/games/create/:name', function(req, res) {

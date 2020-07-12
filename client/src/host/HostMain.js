@@ -66,7 +66,7 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
             console.log('Error: ', e)
         }
     }
-    lobby.startVoteCallback = async () => {
+    lobby.voteCallback = async () => {
         try {
             await HostRequestor.voteNowP(gameId)
             lobby.status = 'endGame'
@@ -74,12 +74,21 @@ async function hostGameP(gameId, gameName, deck, deckIds) {
             console.log('Error: ', e)
         }
     }
-    lobby.startRestartCallback = async () => {
+    lobby.restartCallback = async () => {
         try {
             lobby.remove()
             await HostRequestor.clearP(gameId)
             let game = await HostRequestor.createP(gameName)
             return (await hostGameP(game.id, gameName, lobby.deck, lobby.deckIds))
+        } catch (e) {
+            console.log('Error: ', e)
+        }
+    }
+    lobby.endCallback = async () => {
+        try {
+            await HostRequestor.clearP(gameId)
+            lobby.remove()
+            return await createGameP()
         } catch (e) {
             console.log('Error: ', e)
         }

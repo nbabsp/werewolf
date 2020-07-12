@@ -47,7 +47,6 @@ let waitForStatusP = (gameId, playerId, status) => new Promise((resolve, reject)
     }
     source.onerror = (e) => {
         console.log('got an error', e)
-        source.close()
     }
 })
 

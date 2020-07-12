@@ -20,8 +20,9 @@ class HostControls extends LitElement {
         super()
         this.createCallback = null
         this.startCallback = null
-        this.startVoteCallback = null
-        this.startRestartCallback = null
+        this.voteCallback = null
+        this.restartCallback = null
+        this.endCallback = null
         this.name = ''
         this.deck = []
         this.deckIds = []
@@ -94,11 +95,27 @@ class HostControls extends LitElement {
                 display: inline-block;
                 width: 65px;
                 height: 38px;
-                margin-left: auto;
+                padding-left: auto;
                 margin-right: 10px;
                 top: 5px;
                 padding-top: 2px;
                 background-color: #36393E;
+                color: #FFFFFF;
+                text-align: center;
+                cursor: pointer;
+                z-index: 9;
+            }
+
+            .cornerButton2 {
+                position: relative;
+                display: inline-block;
+                width: 65px;
+                height: 38px;
+                margin-left: auto;
+                margin-right: 10px;
+                top: 5px;
+                padding-top: 2px;
+                background-color: #FF3333;
                 color: #FFFFFF;
                 text-align: center;
                 cursor: pointer;
@@ -125,11 +142,15 @@ class HostControls extends LitElement {
     }
 
     handleVoteClick(event) {
-        if (this.startVoteCallback) this.startVoteCallback()
+        if (this.voteCallback) this.voteCallback()
     }
     
     handleRestartClick(event) {
-        if (this.startRestartCallback) this.startRestartCallback()
+        if (this.restartCallback) this.restartCallback()
+    }
+
+    handleEndClick(event) {
+        if (this.endCallback) this.endCallback()
     }
 
     handleSelectionClick(event) {
@@ -186,15 +207,17 @@ class HostControls extends LitElement {
                         </div>
                 ` : this.status == 'preGame' ? html`
                         <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
+                        <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
                         <div class='cornerButton' @click=${ this.toggleHiddenRoles }>${ this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES' }</div>
                         <div style='display:block;flex-basis:100%;'>
                             ${ !this.hiddenRoles ? html`<selection-grid id='selectedGrid' .selected=${ this.deckIds } @clicked=${ this.handleSelectionClick }></selection-grid>`: ''}
                         </div>
                 ` : this.status == 'voting' ? html`
+                        <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
                         <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
-                        <div style='display:block;flex-basis:100%;'>
                 ` : this.status == 'endGame' ? html`
-                        <div class = cornerButton @click=${ this.handleRestartClick }>NEW\nGAME</div>
+                        <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
+                        <div class='cornerButton' @click=${ this.handleRestartClick }>NEW\nGAME</div>
                 ` : '' }
             </div>
         `
