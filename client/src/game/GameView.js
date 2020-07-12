@@ -23,6 +23,8 @@ class GameView {
         game.observeRole('right', role => this.centerCardGrid.exposeCard('right', role))
 
         this.lowerBox = document.createElement('lower-box')
+        this.lowerBox.addEventListener('clicked',  event => interaction.onClick(event.detail))
+        game.observeTimerStatus(status => this.lowerBox.changeTimerStatus(status))
         this.lowerBox.role = game.player.startRole
 
         this.restartButton = document.createElement('restart-button')

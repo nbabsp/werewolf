@@ -4,6 +4,7 @@ class GamePlayer {
         this.name = player.name
         this.startRole = null
         this.role = null
+        this.prepared = false
         this.votes = []
         this.nightActionComplete = false
         this.voted = false
@@ -16,6 +17,7 @@ class GamePlayer {
             name: this.name,
             startRole: this.startRole,
             role: this.role,
+            prepared: this.prepared,
             votes: this.votes,
             nightActionComplete: this.nightActionComplete,
             voted: this.voted,

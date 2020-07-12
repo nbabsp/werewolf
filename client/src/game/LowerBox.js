@@ -48,6 +48,11 @@ class LowerBox extends LitElement {
         super()
         this.role = null
         this.time = null
+        this.phase = null
+    }
+
+    handleClick(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: event.detail }))
     }
 
     exposeCard(role) {
@@ -60,10 +65,15 @@ class LowerBox extends LitElement {
         description.role = role
     }
 
+    changeTimerStatus(status) {
+        let timer = this.shadowRoot.getElementById('timer')
+        timer.status = status
+    }
+
     render() {
         return html`
             <div class='infoBox'>
-                <count-down-timer time=${ this.time }></count-down-timer>
+                <count-down-timer id='timer' time=${ this.time } @clicked=${ this.handleClick }></count-down-timer>
                 <description-box id='description' role=${ this.role }></description-box>
             </div><div class='myCardWrapper'>
                         <base-card id='lower' .role=${ this.role }></base-card>

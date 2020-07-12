@@ -28,6 +28,7 @@ class Timer {
 }
 
 let GameMasterRequestor = {    
+    prepareP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/prepare`),
     voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
     votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
@@ -82,6 +83,9 @@ class GameHandler {
 
     onClick(id) {
         switch (this._status) {
+            case 'prepare':
+                this._prepClick(id)
+                break
             case 'night':
                 this._nightClick(id)
                 break
@@ -93,6 +97,13 @@ class GameHandler {
                 break
             default:
                 break
+        }
+    }
+
+    async _prepClick(id) {
+        if (id == 'ready') {
+            this._game.setTimerStatus('waiting')
+            await GameMasterRequestor.prepareP(this._game.id, this._player.id)
         }
     }
 
@@ -128,7 +139,10 @@ class GameHandler {
     async preparePhaseP() {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
         await waitP(0.5)
+        this._status = 'prepare'
         this._game.setRole(this._player.id, 'myCard')
+        await waitForStatusP(this._game.id, this._player.id, 'night')
+        this._game.setTimerStatus('game')
         await new Promise(resolve => this._startTimer(5, resolve)) // give players a chance to internalize their card
     }
 

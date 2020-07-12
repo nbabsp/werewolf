@@ -71,6 +71,15 @@ app.get('/games/:gameId/status/:playerId', (req, res) => {
     })
 })
 
+app.post('/games/:gameId/players/:playerId/prepare', function(req, res) {
+    let game = GM.get(req.params.gameId)
+    if (!game) return _errorResponse(res, 'bad game id')
+    let player = PM.get(req.params.playerId)
+    if (!player) return _errorResponse(res, 'bad player id')
+    if (!game.prepare(player.id)) return _errorResponse(res, 'unregistered playerId in prepare')
+    _jsonResponse(res, {})
+})
+
 app.get('/games/:gameId/voteNow', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
