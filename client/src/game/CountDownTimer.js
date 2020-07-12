@@ -3,7 +3,8 @@ import { LitElement, html, css} from 'lit-element'
 class CountDownTimer extends LitElement {
     static get properties() {
         return {
-            time: { type: Number }
+            time: { type: Number },
+            status: { type: String },
         }
     }
 
@@ -20,6 +21,7 @@ class CountDownTimer extends LitElement {
             box-sizing: border-box;
             padding-top: 8%;
             font-size: 40px;
+            cursor: pointer;
         }
         `
     }
@@ -27,11 +29,16 @@ class CountDownTimer extends LitElement {
     constructor() {
         super()
         this.time = null
+        this.status = 'preparing'
+    }
+
+    handleClick(event) {
+        this.dispatchEvent(new CustomEvent('clicked', { detail: 'ready' }))
     }
 
     render() {
         return html`
-            <div style='color:${ !(this.time) || (this.time <=0) ? '#DD4040' : '#FFFFFF'};font-weight:${ !(this.time) || (this.time <=0) ? '800' : '400'}'>${ this.time ? `${Math.floor(this.time/60)}:${this.time%60>=10 ? this.time%60 : `0${this.time%60}`}` : '0:00' }</div>            
+            <div @click=${ this.handleClick } style='color:${ (this.status == 'preparing') ? '#00FF00' : (this.status == 'waiting') ? '#0000FF' : (this.time <=0) ? '#DD4040' : '#FFFFFF'};font-weight:${ !(this.time) || (this.time <=0) ? '800' : '400'}'>${ this.status == 'preparing' ? 'CLICK TO START' : (this.status == 'waiting') ? 'WAITING...' : (this.time) ? `${Math.floor(this.time/60)}:${this.time%60>=10 ? this.time%60 : `0${this.time%60}`}` : ''}</div>            
         `
     }
 }

@@ -80,7 +80,7 @@ class Game {
         if (this.players.length < 3) throw 'Not enough players'
         if (deck.length != (this.players.length + 3)) throw 'Wrong number of cards'
         this.deal(deck)
-        this.updateStatus('night')
+        this.updateStatus('preparing')
     }
 
     deal(deck) {
@@ -154,6 +154,16 @@ class Game {
         player.nightActionComplete = true
         if (this.players.filter(player => player.nightActionComplete).length == this.players.length) {
             this.daybreak()
+        }
+        return true
+    }
+
+    prepare(playerId) {
+        let player = this.getPlayer(playerId)
+        if (!player) return false
+        player.prepared = true
+        if (this.players.filter(player => player.prepared).length == this.players.length) {
+            this.updateStatus('night')
         }
         return true
     }

@@ -12,6 +12,7 @@ class Game {
         this.center = center
         this.gameTime = 0
         this._timeObservers = []
+        this._timerStatusObservers = []
         this._roleObservers = {}
         this.players.forEach(player => this._roleObservers[player.id] = [])
         this._deathObservers = {}
@@ -29,6 +30,10 @@ class Game {
     set time(time) {
         this._timeObservers.forEach(callback => callback(time))
         this.gameTime = time
+    }
+
+    setTimerStatus(status) {
+        this._timerStatusObservers.forEach(callback => callback(status))
     }
 
     setRole(id, role) {
@@ -49,6 +54,10 @@ class Game {
 
     setEndGame(endGame) {
         this._endGameObservers.forEach(callback => callback(endGame))
+    }
+
+    observeTimerStatus(callback) {
+        this._timerStatusObservers.push(callback)
     }
 
     observeRole(id, callback) {
