@@ -11,37 +11,6 @@ let HostRequestor = {
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
 }
 
-let registerPlayer = (name, gameName) => new Promise( async (resolve, reject) => {
-    let player = await StaticRequestor.postP('/players/register', {name: name})
-    let source = StaticRequestor.eventSource(`/games/find/${gameName}/${player.id}`)
-    source.onmessage = (e) => {
-        console.log('got message', e, e.data)
-        console.log('closing', player.id)
-        source.close()
-        resolve(e.data)
-    }
-    source.onerror = (e) => {
-        console.log('got an error', e)
-        source.close()
-    }
-})
-
-async function createGameP(session) {
-    let lobby = document.createElement('host-controls')
-    lobby.status = 'beforeGame'
-    lobby.createCallback = async () => {
-        try {
-            let game = await HostRequestor.createP(session.name)
-            lobby.remove()
-            console.log('Creating Game')
-            return await hostGameP(session, game.id, [], [])
-        } catch (e) {
-            console.log('Error: ', e)
-        }
-    }
-    document.body.appendChild(lobby)
-}
-
 async function hostGameP(session, gameId, deck, deckIds) {
     console.log('hosting game:', gameId)
     let lobby = document.createElement('host-controls')
@@ -49,8 +18,6 @@ async function hostGameP(session, gameId, deck, deckIds) {
     lobby.deck = deck
     lobby.deckIds = deckIds
     if (process.env.ENV == 'debug') {
-        await registerPlayer('a', session.name)
-        await registerPlayer('b', session.name)
         lobby.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
         lobby.deckIds = ['werewolf1', 'werewolf2', 'seer', 'robber', 'troublemaker', 'villager1']
     }
@@ -88,8 +55,6 @@ async function hostGameP(session, gameId, deck, deckIds) {
     lobby.endCallback = async () => {
         try {
             await HostRequestor.clearP(gameId)
-            lobby.remove()
-            return await createGameP(session)
         } catch (e) {
             console.log('Error: ', e)
         }
@@ -100,8 +65,10 @@ async function hostGameP(session, gameId, deck, deckIds) {
 async function mainP() {
     await HostRequestor.clearSessionsP() // clean up the sessions before we start
     let session = await HostRequestor.createSessionP()
-    console.log('got session', session)
-    await createGameP(session)
+    console.log('created session', session)
+    let game = await HostRequestor.createP(session.name)
+    console.log('initial game', game)
+    return await hostGameP(session, game.id, [], [])
 }
 
 export default mainP

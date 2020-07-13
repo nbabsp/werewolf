@@ -37,6 +37,13 @@ async function joinGameP(gameName, playerId) {
     document.body.appendChild(div)
     let gameId = await findGameP(gameName, playerId)
     div.remove()
+    // inject two more players in debug environment
+    if (process.env.ENV == 'debug') {
+        let player = await PlayerRequestor.registerP('AI-1')
+        await findGameP(gameName, player.id)
+        player = await PlayerRequestor.registerP('AI-2')
+        await findGameP(gameName, player.id)
+    }
     return gameId
 }
 
