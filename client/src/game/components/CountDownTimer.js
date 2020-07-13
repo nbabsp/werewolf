@@ -35,12 +35,26 @@ class CountDownTimer extends LitElement {
     }
 
     handleClick(event) {
-        this.dispatchEvent(new CustomEvent('clicked', { detail: 'ready' }))
+        this.dispatchEvent(new CustomEvent('clicked', { detail: 'timerClick' }))
     }
 
     render() {
         return html`
-            <div @click=${ this.handleClick } style='color:${ (this.status == 'preparing') ? '#00FF00' : (this.status == 'waiting') ? '#0000FF' : (this.time <=0) ? '#DD4040' : '#FFFFFF'};font-weight:${ !(this.time) || (this.time <=0) ? '800' : '400'}'>${ this.status == 'preparing' ? 'CLICK TO START' : (this.status == 'waiting') ? 'WAITING...' : (this.time) ? `${Math.floor(this.time/60)}:${this.time%60>=10 ? this.time%60 : `0${this.time%60}`}` : ''}</div>            
+            <div @click=${ this.handleClick } 
+                style='color:${ 
+                    (this.status == 'preparing') ? '#00FF00' : 
+                    (this.status == 'waiting') ? '#0000FF' : 
+                    (this.status == 'rejoining') ? '#FFFF00' : 
+                    (this.time <=0) ? '#DD4040' : '#FFFFFF' };
+                font-weight:${ 
+                    !(this.time) || (this.time <=0) ? '800' : '400'
+                }'>${ 
+                    (this.status == 'preparing') ? 'CLICK TO START' : 
+                    (this.status == 'waiting') ? 'WAITING...' :
+                    (this.status == 'rejoining') ? 'CLICK TO RESTART' : 
+                    (this.time) ? `${Math.floor(this.time/60)}:${this.time%60>=10 ? this.time%60 : `0${this.time%60}`}` 
+                    : ''}
+            </div>            
         `
     }
 }

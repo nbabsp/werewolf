@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit-element'
-import '../components/CTAButton'
+import '../../components/CTAButton'
 import './SelectionGrid'
-import '../components/NameList'
+import '../../components/NameList'
 
 class HostControls extends LitElement {
     static get properties() {
