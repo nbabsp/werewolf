@@ -1,5 +1,5 @@
 import { LitElement, html, css} from 'lit-element'
-import StaticRequestor from '../common/StaticRequestor'
+import StaticRequestor from '../../common/StaticRequestor'
 
 class RoleToken extends LitElement {
     static get properties() {

@@ -1,4 +1,4 @@
-import './TextGrabber'
+import '../components/TextGrabber'
 
 let InputPopover = {
     getP: (instruction, action) => new Promise((resolve, reject) => {

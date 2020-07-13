@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit-element'
-import ErrorPopup from './ErrorPopup'
+import ErrorPopup from '../common/ErrorPopup'
 
 class TextGrabber extends LitElement {
     static get properties() {

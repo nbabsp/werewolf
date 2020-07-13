@@ -1,4 +1,4 @@
-import './ErrorDisplay'
+import '../components/ErrorDisplay'
 
 let ErrorPopup = {
     post: (instruction) => new Promise((resolve, reject) => {

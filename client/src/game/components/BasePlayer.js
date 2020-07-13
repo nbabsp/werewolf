@@ -1,6 +1,6 @@
 import { LitElement, html, css} from 'lit-element'
 import './BaseCard'
-import StaticRequestor from '../common/StaticRequestor'
+import StaticRequestor from '../../common/StaticRequestor'
 
 class BasePlayer extends LitElement {
     static get properties() {

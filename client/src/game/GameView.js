@@ -1,8 +1,7 @@
-import './PlayerGrid'
-import './CenterCardGrid'
-import './LowerBox'
+import './components/PlayerGrid'
+import './components/CenterCardGrid'
+import './components/LowerBox'
 import './GameView.css'
-import './RestartButton'
 
 class GameView {
     constructor(game, interaction) {
