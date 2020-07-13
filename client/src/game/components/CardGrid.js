@@ -24,15 +24,17 @@ class CardGrid extends LitElement {
             background-repeat: none;
             background-size: cover;
             box-shadow: 0px 0px 4px 3px #222222
+            
         }
 
         .grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-evenly;
-            background-color: #665577;
-            border-top-style: solid;
-            border-top-width: 2px;
+            background-color: #999999;
+            border-style: solid;
+            border-width: 2px;
+            border-color: #aa4444;
         }
 
         .break {
