@@ -32,16 +32,6 @@ class HostControls extends LitElement {
         this.status = 'preGame'
     }
 
-    firstUpdated(changedProperties) {
-        let input = this.shadowRoot.getElementById('input')
-        let button = this.shadowRoot.getElementById('createButton')
-        if(input) {
-            input.addEventListener("keyup", function(event) {
-                if (event.keyCode == 13) button.click()
-            })    
-        }
-    }
-
     static get styles() {
         return css`
             .topBar {
@@ -70,12 +60,6 @@ class HostControls extends LitElement {
                 background-color: #5050aa;
                 color: #000000;
                 text-align: center;
-                margin: 10px auto 10px auto;
-            }
-
-            .nameInput {
-                display: block;
-                width: 300px;
                 margin: 10px auto 10px auto;
             }
 
@@ -134,8 +118,7 @@ class HostControls extends LitElement {
     }
 
     handleCreateClick(event) {
-        let input = this.shadowRoot.getElementById('input')
-        if (this.createCallback && input.value) this.createCallback(input.value)
+        if (this.createCallback) this.createCallback()
     }
 
     handleStartClick(event) {
@@ -202,8 +185,6 @@ class HostControls extends LitElement {
                 <div class='name'>${ this.name }</div>
                 ${  this.status == 'beforeGame' ? html`
                         <div style='width:100%;display:block;'>
-                            <div class='infoText'>NAME OF NEW GAME</div>
-                            <input type='text' id='input' class='nameInput'></input>
                             <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
                         </div>
                 ` : this.status == 'preGame' ? html`

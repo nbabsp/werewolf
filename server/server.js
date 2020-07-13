@@ -3,6 +3,8 @@ const express = require('express')
 const path = require('path')
 const GameDatabase = require('./src/GameDatabase')
 const PlayerDatabase = require('./src/PlayerDatabase')
+const SessionDatabase = require('./src/SessionDatabase')
+const SessionRoutes = require('./routes/SessionRoutes')
 const PlayerRoutes = require('./routes/PlayerRoutes')
 const HostRoutes = require('./routes/HostRoutes')
 
@@ -33,6 +35,10 @@ let context = {
     sendJSON: _jsonResponse,
     app: app
 }
+
+// session routes
+let SM = new SessionDatabase()
+SessionRoutes(context, SM)
 
 // player routes
 let PM = new PlayerDatabase()
