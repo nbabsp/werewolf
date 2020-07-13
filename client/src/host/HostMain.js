@@ -1,6 +1,6 @@
 import StaticRequestor from '../common/StaticRequestor'
 import ErrorPopup from '../common/ErrorPopup'
-import './HostControls'
+import './components/HostControls'
 
 let HostRequestor = {
     clearSessionsP: () => StaticRequestor.getP(`/sessions/clear`),
