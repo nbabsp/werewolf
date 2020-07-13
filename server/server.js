@@ -99,11 +99,6 @@ app.get('/games/:gameId', function(req, res) {
     _jsonResponse(res, game.json)
 })
 
-app.get('/games/:gameName/exists', function(req, res) {
-    let game = GM.getByName(req.params.gameName)
-    _jsonResponse(res, !!(game))
-})
-
 app.get('/games/:gameId/players', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
