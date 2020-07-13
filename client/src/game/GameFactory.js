@@ -5,10 +5,11 @@ let GameFactoryRequestor = {
 }
 
 class Game {
-    constructor(gameId, players, player, center) {
+    constructor(gameId, players, player, cards, center) {
         this.id = gameId
         this.players = players
         this.player = player
+        this.cards = cards
         this.center = center
         this.gameTime = 0
         this._timeObservers = []
@@ -93,7 +94,7 @@ let GameFactory = {
     createP: async (gameId, playerId) => {
         let game = await GameFactoryRequestor.getP(gameId)
         let player = game.players.find(player => player.id == playerId)
-        return new Game(gameId, game.players, player, game.center)
+        return new Game(gameId, game.players, player, game.cards, game.center)
     }
 }
 
