@@ -101,7 +101,7 @@ class GameHandler {
     }
 
     async _prepClick(id) {
-        if (id == 'ready') {
+        if (id == 'timerClick') {
             this._game.setTimerStatus('waiting')
             await GameMasterRequestor.prepareP(this._game.id, this._player.id)
         }
@@ -119,7 +119,7 @@ class GameHandler {
     }
 
     _votedClick(id) {
-        if (id == 'restart') {
+        if (id == 'timerClick') {
             this._complete = true
             return
         }
@@ -187,6 +187,7 @@ class GameHandler {
         console.log('voted!')
         this._endGame(game)
         this._game.setEndGame(true)
+        this._game.setTimerStatus('rejoining')
         while(!this._complete) { 
             await waitP(2)
         }
