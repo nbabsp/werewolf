@@ -8,11 +8,9 @@ import './components/BaseLobby'
 
 let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
-    playerP: (playerId) => StaticRequestor.getP(`/players/${playerId}`),
-    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
     findGameSource: (gameName, playerId) => StaticRequestor.eventSource(`/games/find/${gameName}/${playerId}`),
     statusSource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
-    gameExistsP: (gameName) => StaticRequestor.getP(`/games/${gameName}/exists`)
+    getSessionP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}`)
 }
 
 let findGameP = (gameName, playerId) => new Promise((resolve, reject) => {
@@ -63,11 +61,11 @@ let waitInLobbyP = (lobby, playerId, gameId) => new Promise((resolve, reject) =>
     }
 })
 
-async function playP(gameName, playerId) {
-    let gameId = await joinGameP(gameName, playerId)
+async function playP(session, playerId) {
+    let gameId = await joinGameP(session.name, playerId)
 
     let lobby = document.createElement('base-lobby')
-    lobby.name = gameName
+    lobby.name = session.name
     document.body.appendChild(lobby)
     await waitInLobbyP(lobby, playerId, gameId)
     lobby.remove()
@@ -89,7 +87,26 @@ async function playP(gameName, playerId) {
     let GM = new GameMaster(game, interaction)
     await GM.playP()
     main.element.remove()
-    playP(gameName, playerId)
+    playP(session, playerId)
+}
+
+async function findSessionP() {
+    let sessionId = await InputPopover.getP('Input group name', 'JOIN GROUP')
+    let session = await PlayerRequestor.getSessionP(sessionId)
+    console.log('got session', session)
+    while(!session) {
+        ErrorPopup.post('Group not found')
+        sessionId = await InputPopover.getP('Input group name', 'JOIN GROUP')
+        session = await PlayerRequestor.getSessionP(sessionId)
+    }
+    return session
+}
+
+async function joinSessionP(session) {
+    let name = await InputPopover.getP('Input your name', 'REGISTER')
+    let player = await PlayerRequestor.registerP(name)
+    console.log('got player', player)
+    return player.id
 }
 
 async function mainP() {
@@ -97,18 +114,10 @@ async function mainP() {
         e.preventDefault()
         e.returnValue = ''
     })
-    
-    let gameName = await InputPopover.getP('Input game name', 'FIND GAME')
-    let foundGame = await PlayerRequestor.gameExistsP(gameName)
-    while(!foundGame) {
-        ErrorPopup.post('Game does not exist')
-        gameName = await InputPopover.getP('Input game name', 'JOIN GAME')
-        foundGame = await PlayerRequestor.gameExistsP(gameName)
-    }
-    let name = await InputPopover.getP('Input your name', 'REGISTER')
-    let player = await PlayerRequestor.registerP(name)
-    console.log('got player', player)
-    playP(gameName, player.id)
+
+    let session = await findSessionP()
+    let playerId = await joinSessionP(session)
+    playP(session, playerId)
 }
 
 export default mainP
