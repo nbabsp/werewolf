@@ -19,7 +19,7 @@ class Game {
         this.name = name
         this.players = []
         this.status = 'creating'
-        this.cards = {}
+        this.cards = []
         this.roles = {}
         this.center = {}
         this._handlers = {}
@@ -33,6 +33,7 @@ class Game {
             id: this.id,
             name: this.name,
             players: this.players,
+            cards: this.cards,
             center: this.center,
             status: this.status,
         }
@@ -88,10 +89,10 @@ class Game {
             console.log('bad number of players')
             return
         }
+        this.cards = deck
         let shuffledDeck = shuffle(deck)
         console.log(shuffledDeck)
         for(let len = this.players.length, i = 0; i < len; i++) {
-            this.cards[this.players[i].id] = shuffledDeck[i]
             this.roles[this.players[i].id] = shuffledDeck[i]
             this.players[i].startRole = shuffledDeck[i]
             this.players[i].role = shuffledDeck[i]
