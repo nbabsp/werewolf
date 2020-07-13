@@ -18,7 +18,6 @@ class HostControls extends LitElement {
 
     constructor() {
         super()
-        this.createCallback = null
         this.startCallback = null
         this.voteCallback = null
         this.restartCallback = null
@@ -117,10 +116,6 @@ class HostControls extends LitElement {
         `
     }
 
-    handleCreateClick(event) {
-        if (this.createCallback) this.createCallback()
-    }
-
     handleStartClick(event) {
         if (this.startCallback) this.startCallback()
     }
@@ -183,11 +178,7 @@ class HostControls extends LitElement {
         return html`
             <div class='topBar'>
                 <div class='name'>${ this.name }</div>
-                ${  this.status == 'beforeGame' ? html`
-                        <div style='width:100%;display:block;'>
-                            <cta-button class='startButton' id='createButton' text='CREATE GAME' @click=${ this.handleCreateClick }></cta-button>
-                        </div>
-                ` : this.status == 'preGame' ? html`
+                ${ this.status == 'preGame' ? html`
                         <cta-button class='startButton' text='START GAME' @click=${ this.handleStartClick }></cta-button>
                         <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
                         <div class='cornerButton' @click=${ this.toggleHiddenRoles }>${ this.hiddenRoles ? 'SELECT\nROLES' : 'HIDE\nROLES' }</div>
