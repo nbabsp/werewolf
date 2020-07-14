@@ -25,10 +25,6 @@ class GameDatabase {
         return this._games.find(game => game.id == id)
     }
 
-    getByName(name) {
-        return this._games.find(game => game.name == name)
-    }
-
     create(name) {
         let game = new Game(name)
         this._games.push(game)

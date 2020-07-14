@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, './public')))
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET')
+    res.header('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE')
     next()
 })
 
@@ -36,10 +36,6 @@ let context = {
     app: app
 }
 
-// session routes
-let SM = new SessionDatabase()
-SessionRoutes(context, SM)
-
 // player routes
 let PM = new PlayerDatabase()
 PlayerRoutes(context, PM)
@@ -47,6 +43,10 @@ PlayerRoutes(context, PM)
 // game host routes
 let GM = new GameDatabase()
 HostRoutes(context, PM, GM)
+
+// session routes
+let SM = new SessionDatabase()
+SessionRoutes(context, SM, PM, GM)
 
 app.get('/', (req, res) => {
     res.redirect('/join.html')
