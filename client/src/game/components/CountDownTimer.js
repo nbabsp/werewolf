@@ -17,7 +17,6 @@ class CountDownTimer extends LitElement {
             border-width: 1px;
             border-color: #000000;
             border-bottom-style: solid;
-            border-right-style: solid;
             box-sizing: border-box;
             align-items: center;
             justify-content: center;

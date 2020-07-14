@@ -17,6 +17,7 @@ class LowerBox extends LitElement {
             display: flex;
             margin: auto;
             width: 100%;
+            height: fit-content;
         }
         .infoBox {
             background-color: #555555;
@@ -27,7 +28,11 @@ class LowerBox extends LitElement {
             text-align: center;
             width: 75%;
             vertical-align: top;
-        }
+            border-width: 1px;
+            border-color: #000000;
+            border-right-style: solid;
+            box-sizing: border-box;
+}
         .myCardWrapper {
             background-color: #555555;
             display: inline-block;
