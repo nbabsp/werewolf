@@ -1,15 +1,5 @@
 let HostRoutes = function(context, playerDatabase, gameDatabase) {
 
-    context.app.post('/games/clear/:gameId', function(req, res) {
-        if (!req.params.gameId) return context.sendError(res, 'bad game id')
-        context.sendJSON(res, gameDatabase.clear(req.params.gameId))
-    })
-
-    context.app.post('/games/create/:name', function(req, res) {
-        if (!req.params.name) return context.sendError(res, 'missing name in create game')
-        context.sendJSON(res, gameDatabase.create(req.params.name))
-    })
-
     context.app.get('/games/find/:gameName/:playerId', (req, res) => {
         let gameName = req.params.gameName
         let playerId = req.params.playerId

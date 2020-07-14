@@ -53,6 +53,7 @@ let Requestor = {
     getP: (host, port, path) => _authRequestP(host, port, 'GET', path, {}),
     putP: (host, port, path, json) => _sendJSONP(host, port, 'PUT', path, json),
     postP: (host, port, path, json) => _sendJSONP(host, port, 'POST', path, json),
+    deleteP: (host, port, path) => _authRequestP(host, port, 'DELETE', path, {}),
 }
 
 export default Requestor

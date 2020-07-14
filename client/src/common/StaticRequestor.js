@@ -14,6 +14,7 @@ let StaticRequestor = {
     getP: (path) => Requestor.getP(host, port, path),
     putP: (path, json) => Requestor.putP(host, port, path, json),
     postP: (path, json) => Requestor.postP(host, port, path, json),
+    deleteP: (path) => Requestor.deleteP(host, port, path),
     eventSource: (path) => new EventSource(`${protocol}://${host}:${port}${path}`),
     basePath: `${protocol}://${host}:${port}`
 }
