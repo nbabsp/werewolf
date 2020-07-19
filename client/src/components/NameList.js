@@ -3,7 +3,8 @@ import { LitElement, html, css} from 'lit-element'
 class NameList extends LitElement {
     static get properties() {
         return {
-            names: { type: Array }
+            names: { type: Array },
+            playerList: { type: Object }
         }
     }
 
@@ -33,11 +34,14 @@ class NameList extends LitElement {
     constructor() {
         super()
         this.names = []
+        this.playerList = {}
     }
 
     render() {
         return html`
-            <div>${this.names.map(item => html`<div class='item'>${item}</div>`)}</div>
+            <div>${Object.keys(this.playerList).map(name => html`
+                <div class='item' style=background-color:${ this.playerList[name] ? '#CCEEAA' : '#EEBAAA' }>${name}</div>
+            `)}</div>
         `
     }
 }
