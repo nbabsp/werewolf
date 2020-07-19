@@ -2,6 +2,7 @@ class GamePlayer {
     constructor(player) {
         this.id = player.id
         this.name = player.name
+        this.active = true
         this.startRole = null
         this.role = null
         this.prepared = false
@@ -15,6 +16,7 @@ class GamePlayer {
         return {
             id: this.id,
             name: this.name,
+            active: this.active,
             startRole: this.startRole,
             role: this.role,
             prepared: this.prepared,

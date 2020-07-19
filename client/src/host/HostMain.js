@@ -9,12 +9,14 @@ let HostRequestor = {
     clearP: (sessionId) => StaticRequestor.deleteP(`/sessions/${sessionId}/game`),
     startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
     voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
+    startSessionGameP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}/startGame`),
+    endSessionGameP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}/endGame`)
 }
 
 async function hostGameP(session, gameId, deck, deckIds) {
     console.log('hosting game:', gameId)
     let lobby = document.createElement('host-controls')
-    lobby.name = session.name
+    lobby.name = session.id
     lobby.deck = deck
     lobby.deckIds = deckIds
     if (process.env.ENV == 'debug') {
@@ -26,6 +28,7 @@ async function hostGameP(session, gameId, deck, deckIds) {
     lobby.startCallback = async () => {
         try {
             await HostRequestor.startP(gameId, lobby.deck)
+            await HostRequestor.startSessionGameP(session.id)
             lobby.hiddenRoles = true
             lobby.status = 'voting'
             console.log('Starting Game', gameId)
@@ -37,6 +40,7 @@ async function hostGameP(session, gameId, deck, deckIds) {
     lobby.voteCallback = async () => {
         try {
             await HostRequestor.voteNowP(gameId)
+            await HostRequestor.endSessionGameP(session.id)
             lobby.status = 'endGame'
         } catch (e) {
             console.log('Error: ', e)
