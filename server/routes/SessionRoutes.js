@@ -31,10 +31,25 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
         context.sendJSON(res, sessionDatabase.get(req.params.sessionId))
     })
 
-    context.app.post('/sessions/:sessionId/game', function(req, res) {
+    context.app.post('/sessions/:sessionId/game/:playerIds/:deck', function(req, res) {
         let session = sessionDatabase.get(req.params.sessionId)
         if (!session) return context.sendError(res, 'bad session id')
-        session.game = gameDatabase.create(session.id) // backwards compatibility
+        let playerIds = JSON.parse(req.params.playerIds)
+        if (!playerIds) return context.sendError(res, 'bad players ids')
+        let players = playerIds.map(id => session.getPlayer(id))
+        let deck = JSON.parse(req.params.deck)
+        if (!deck) return context.sendError(res, 'bad deck')
+        session.game = gameDatabase.create(session.id, players) // backwards compatibility
+        try {
+            session.game.start(deck)
+        }
+        catch (e){
+            session.game = null
+            return context.sendError(res, e)
+        }
+        session.gameId = session.game.id
+        session.updateStatus('playing')
+        session.players.forEach(player => player.active = false)
         context.sendJSON(res, session.game)
     })
 
@@ -50,6 +65,7 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
         if (!session.game) return context.sendError(res, 'no game in session')
         gameDatabase.clear(session.game.id)
         delete session.game
+        session.updateStatus('lobby')
         context.sendJSON(res, {})
     })
 
@@ -62,23 +78,15 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
         context.sendJSON(res, {})
     })
 
+    context.app.get('/sessions/:sessionId/players/', function(req, res) {
+        let session = sessionDatabase.get(req.params.sessionId)
+        if (!session) return context.sendError(res, 'bad session id')
+        let players = session.getPlayers()
+        context.sendJSON(res, JSON.stringify(players))
+    })
+
     context.app.get('/sessions/clear', function(req, res) {
         context.sendJSON(res, sessionDatabase.clear())
-    })
-
-    context.app.get('/sessions/:sessionId/startGame', function(req, res) {
-        let session = sessionDatabase.get(req.params.sessionId)
-        if (!session) return context.sendError(res, 'bad session id')
-        session.updateStatus('playing')
-        session.players.forEach(player => player.active = false)
-        context.sendJSON(res, {})
-    })
-
-    context.app.get('/sessions/:sessionId/endGame', function(req, res) {
-        let session = sessionDatabase.get(req.params.sessionId)
-        if (!session) return context.sendError(res, 'bad session id')
-        session.updateStatus('lobby')
-        context.sendJSON(res, {})
     })
 
     context.app.post('/sessions/:sessionId/players/:playerId/activate', function(req, res) {

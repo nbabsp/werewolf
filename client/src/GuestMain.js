@@ -15,40 +15,6 @@ let PlayerRequestor = {
     statusSource: (sessionId, playerId) => StaticRequestor.eventSource(`/sessions/${sessionId}/status/${playerId}`)
 }
 
-let findGameP = (sessionId, playerId) => new Promise((resolve, reject) => {
-    let source = PlayerRequestor.findGameSource(sessionId, playerId)
-    source.onmessage = (e) => {
-        console.log('got message', e, e.data)
-        console.log('closing', playerId)
-        source.close()
-        resolve(e.data)
-    }
-    source.onerror = (e) => {
-        console.log('got an error', e)
-        source.close()
-    }
-})
-
-async function joinGameP(sessionId, playerId) {
-    let div = document.createElement('div')
-    div.appendChild(document.createTextNode('Waiting for host to restart game'))
-    div.style.textAlign = 'center'
-    div.style.margin = 'auto'
-    document.body.appendChild(div)
-    let gameId = await findGameP(sessionId, playerId)
-    div.remove()
-    // inject two more players in debug environment
-    if (process.env.ENV == 'debug') {
-        let player = await PlayerRequestor.registerP('AI-1')
-        await PlayerRequestor.joinSessionP(sessionId, player.id)
-        await findGameP(sessionId, player.id)
-        player = await PlayerRequestor.registerP('AI-2')
-        await PlayerRequestor.joinSessionP(sessionId, player.id)
-        await findGameP(sessionId, player.id)
-    }
-    return gameId
-}
-
 let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject) => {
     let source = PlayerRequestor.statusSource(sessionId, playerId)
     source.onmessage = (e) => {
@@ -56,7 +22,7 @@ let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject)
         lobby.players = session.players
         if (session.status != 'lobby') {
             source.close()
-            resolve(session)
+            resolve(session.gameId)
         }
     }
     source.onerror = (e) => {
@@ -67,13 +33,13 @@ let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject)
 })
 
 async function playP(sessionId, playerId) {
-    let gameId = await joinGameP(sessionId, playerId)
+    //let gameId = await joinGameP(sessionId, playerId)
     await PlayerRequestor.activateP(sessionId, playerId)
 
     let lobby = document.createElement('base-lobby')
     lobby.name = sessionId
     document.body.appendChild(lobby)
-    await waitInLobbyP(lobby, playerId, sessionId)
+    let gameId = await waitInLobbyP(lobby, playerId, sessionId)
     lobby.remove()
 
     let _clickObservers = []

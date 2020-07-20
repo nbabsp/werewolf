@@ -89,7 +89,7 @@ app.post('/games/:gameId/players/:playerId/prepare', function(req, res) {
 app.get('/games/:gameId/voteNow', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
-    game.updateStatus('endOfDay')
+    game.updateStatus('endGame')
     _jsonResponse(res, {})
 })
 

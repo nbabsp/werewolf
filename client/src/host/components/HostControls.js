@@ -124,31 +124,11 @@ class HostControls extends LitElement {
         if (this.voteCallback) this.voteCallback()
     }
     
-    handleRestartClick(event) {
-        if (this.restartCallback) this.restartCallback()
-    }
-
     handleEndClick(event) {
         if (this.endCallback) this.endCallback()
     }
 
     handleSelectionClick(event) {
-        let grid = this.shadowRoot.getElementById('selectedGrid')
-        if (this.deckIds.includes(event.detail.id)) {
-            let index = this.deckIds.indexOf(event.detail.id)
-            if (index !== -1) {
-                this.deckIds.splice(index, 1)
-                this.deck.splice(index, 1)
-                grid.selectedCard(event.detail.id, false)
-            }
-        } else {
-            this.deckIds.push(event.detail.id)
-            this.deck.push(event.detail.role)
-            grid.selectedCard(event.detail.id, true)
-        }
-    }
-
-    handleKickClick(event) {
         let grid = this.shadowRoot.getElementById('selectedGrid')
         if (this.deckIds.includes(event.detail.id)) {
             let index = this.deckIds.indexOf(event.detail.id)
@@ -188,9 +168,6 @@ class HostControls extends LitElement {
                 ` : this.status == 'voting' ? html`
                         <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
                         <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
-                ` : this.status == 'endGame' ? html`
-                        <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
-                        <div class='cornerButton' @click=${ this.handleRestartClick }>NEW\nGAME</div>
                 ` : '' }
             </div>
         `
