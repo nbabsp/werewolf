@@ -18,10 +18,6 @@ class HostControls extends LitElement {
 
     constructor() {
         super()
-        this.startCallback = null
-        this.voteCallback = null
-        this.restartCallback = null
-        this.endCallback = null
         this.name = ''
         this.deck = []
         this.deckIds = []
@@ -29,6 +25,10 @@ class HostControls extends LitElement {
         this.hiddenRoles = true
         this.hiddenPlayers = true
         this.status = 'preGame'
+        if (process.env.ENV == 'debug') {
+            this.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
+            this.deckIds = ['werewolf1', 'werewolf2', 'seer', 'robber', 'troublemaker', 'villager1']
+        }
     }
 
     static get styles() {
@@ -117,15 +117,15 @@ class HostControls extends LitElement {
     }
 
     handleStartClick(event) {
-        if (this.startCallback) this.startCallback()
+        this.dispatchEvent(new Event('start'))
     }
 
     handleVoteClick(event) {
-        if (this.voteCallback) this.voteCallback()
+        this.dispatchEvent(new Event('vote'))
     }
     
     handleEndClick(event) {
-        if (this.endCallback) this.endCallback()
+        this.dispatchEvent(new Event('terminate'))
     }
 
     handleSelectionClick(event) {
