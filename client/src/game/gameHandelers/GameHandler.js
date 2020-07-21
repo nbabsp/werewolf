@@ -1,6 +1,23 @@
 import StaticRequestor from '../../common/StaticRequestor'
 import Stopwatch from '../../common/Stopwatch'
 
+class Deferred {
+    constructor() {
+        this.promise = new Promise((resolve, reject) => {
+            this._resolve = resolve
+            this._reject = reject
+        })
+    }
+
+    resolve(value) {
+        this._resolve(value)
+    }
+
+    reject(value) {
+        this._reject(value)
+    }
+}
+
 class Timer {
     constructor(duration, onTime, onEnd) {
         this._sw = new Stopwatch()
@@ -30,7 +47,6 @@ class Timer {
 let GameMasterRequestor = {    
     prepareP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/prepare`),
     voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
-    votedP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voted`),
     playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
     gameP: (gameId) => StaticRequestor.getP(`/games/${gameId}`),
     endNightActionP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/endNightAction`),
@@ -58,6 +74,7 @@ class GameHandler {
         this._status = 'unknown'
         this._voteId = null
         this._midClick = false
+        this._completeDeferred = new Deferred()
     }
 
     _exposeRole(id) {
@@ -92,8 +109,8 @@ class GameHandler {
             case 'day':
                 this._dayClick(id)
                 break
-            case 'voted':
-                this._votedClick(id)
+            case 'endGame':
+                this._endGameClick(id)
                 break
             default:
                 break
@@ -109,19 +126,19 @@ class GameHandler {
 
     _nightClick(id) {}
 
-    _dayClick(id) {
+    async _dayClick(id) {
         if (this._player.id == id) return
         let player = this._game.players.find(player => player.id == id)
         if (!player || id == this._voteId) return
         if (this._voteId) this._game.setRole(this._voteId, null)
         this._game.setRole(id, 'selected')
         this._voteId = id
+        await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
     }
 
-    _votedClick(id) {
+    _endGameClick(id) {
         if (id == 'timerClick') {
-            this._complete = true
-            return
+            this._completeDeferred.resolve()
         }
     }
 
@@ -170,27 +187,20 @@ class GameHandler {
         let arr = this._game.players.filter(p => p.id != this._player.id)
         if (arr.length > 0) {
             let id = arr[Math.floor(Math.random() * arr.length)].id
-            this._game.setRole(id, 'selected')
-            this._voteId = id
+            this._dayClick(id)
         }
         this._startTimer(300) // countdown for discussion
-        await waitForStatusP(this._game.id, this._player.id, 'endOfDay')
-        this._cancelTimer()
     }
 
     async endPhaseP() {
-        let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
-
-        await GameMasterRequestor.voteP(this._game.id, this._player.id, this._voteId)
-        let game = await waitForStatusP(this._game.id, this._player.id, 'voted')
-        this._status = 'voted'
-        console.log('voted!')
+        let game = await waitForStatusP(this._game.id, this._player.id, 'endGame')
+        this._cancelTimer()
         this._endGame(game)
         this._game.setEndGame(true)
         this._game.setTimerStatus('rejoining')
-        while(!this._complete) { 
-            await waitP(2)
-        }
+        this._status = 'endGame'
+        console.log('endGame!')
+        await this._completeDeferred.promise
     }
 
     async playP() {        

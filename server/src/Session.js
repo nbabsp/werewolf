@@ -6,6 +6,7 @@ class Session {
         this._handlers = []
         this.status = 'lobby'
         this.players = []
+        this.gameId = null
     }
 
     get json() {
@@ -13,7 +14,8 @@ class Session {
             id: this.id,
             handlers: this._handlers,
             status: this.status,
-            players: this.players
+            players: this.players,
+            gameId: this.gameId
         }
     }
 
@@ -44,6 +46,10 @@ class Session {
 
     getPlayer(playerId) {
         return this.players.find((player) => player.id == playerId)
+    }
+
+    getPlayers() {
+        return this.players
     }
 
     updateStatus(status) {
