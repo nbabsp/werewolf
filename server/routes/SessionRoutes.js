@@ -31,15 +31,14 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
         context.sendJSON(res, sessionDatabase.get(req.params.sessionId))
     })
 
-    context.app.post('/sessions/:sessionId/game/:playerIds/:deck', function(req, res) {
+    context.app.post('/sessions/:sessionId/game/', function(req, res) {
         let session = sessionDatabase.get(req.params.sessionId)
         if (!session) return context.sendError(res, 'bad session id')
-        let playerIds = JSON.parse(req.params.playerIds)
-        if (!playerIds) return context.sendError(res, 'bad players ids')
-        let players = playerIds.map(id => session.getPlayer(id))
-        let deck = JSON.parse(req.params.deck)
+        let activePlayersIds = session.players.filter(player => player.active).map(player => player.id)
+        let activePlayers = activePlayersIds.map(id => playerDatabase.get(id))
+        let deck = req.body.deck
         if (!deck) return context.sendError(res, 'bad deck')
-        session.game = gameDatabase.create(session.id, players) // backwards compatibility
+        session.game = gameDatabase.create(session.id, activePlayers) // backwards compatibility
         try {
             session.game.start(deck)
         }
@@ -76,13 +75,6 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
         if (!player) return context.sendError(res, 'bad player id')
         session.join(player)
         context.sendJSON(res, {})
-    })
-
-    context.app.get('/sessions/:sessionId/players/', function(req, res) {
-        let session = sessionDatabase.get(req.params.sessionId)
-        if (!session) return context.sendError(res, 'bad session id')
-        let players = session.getPlayers()
-        context.sendJSON(res, JSON.stringify(players))
     })
 
     context.app.get('/sessions/clear', function(req, res) {

@@ -46,10 +46,8 @@ class Timer {
 
 let GameMasterRequestor = {    
     prepareP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/prepare`),
-    voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
-    playersP: (gameId) => StaticRequestor.getP(`/games/${gameId}/players`),
-    gameP: (gameId) => StaticRequestor.getP(`/games/${gameId}`),
     endNightActionP: (gameId, playerId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/endNightAction`),
+    voteP: (gameId, playerId, voteId) => StaticRequestor.postP(`/games/${gameId}/players/${playerId}/vote/${voteId}`),
     statusSource: (gameId, playerId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
 }
 
