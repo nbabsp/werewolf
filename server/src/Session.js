@@ -40,7 +40,7 @@ class Session {
             console.log('player already in session')
             return
         }
-        this.players.push(new GamePlayer(player))
+        this.players.push(player)
         Object.values(this._handlers).forEach(callback => callback(this))
     }
 

@@ -165,13 +165,8 @@ class Game {
         console.log('VOTED', votedId)
         if (!votedPlayer) return false
         votedPlayer.votes.push(player.name)
-        player.voted = true
         player.votedId = votedId
         return true
-    }
-
-    end() {
-        this.status = 'done'
     }
 }
 

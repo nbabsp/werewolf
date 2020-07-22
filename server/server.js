@@ -6,7 +6,6 @@ const PlayerDatabase = require('./src/PlayerDatabase')
 const SessionDatabase = require('./src/SessionDatabase')
 const SessionRoutes = require('./routes/SessionRoutes')
 const PlayerRoutes = require('./routes/PlayerRoutes')
-const HostRoutes = require('./routes/HostRoutes')
 
 const app = express()
 app.use(express.json())
@@ -42,7 +41,6 @@ PlayerRoutes(context, PM)
 
 // game host routes
 let GM = new GameDatabase()
-HostRoutes(context, PM, GM)
 
 // session routes
 let SM = new SessionDatabase()
@@ -99,47 +97,6 @@ app.get('/games/:gameId', function(req, res) {
     _jsonResponse(res, game.json)
 })
 
-app.get('/games/:gameId/players', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    _jsonResponse(res, game.players)
-})
-
-app.put('/games/:gameId/players/:playerId', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    let player = PM.get(req.params.playerId)
-    if (!player) return _errorResponse(res, 'bad player')
-    game.join(player)
-    _jsonResponse(res, game.json)
-})
-
-app.get('/games/:gameId/players/:playerId', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    let player = game.getPlayer(req.params.playerId)
-    if (!player) return _errorResponse(res, 'bad player')
-    _jsonResponse(res, player.json)
-})
-
-app.get('/games/:gameId/center/left', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    _jsonResponse(res, { name: game.center.left })
-})
-
-app.get('/games/:gameId/center/center', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    _jsonResponse(res, { name: game.center.center })
-})
-
-app.get('/games/:gameId/center/right', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    _jsonResponse(res, { name: game.center.right })
-})
-
 app.post('/games/:gameId/start/:deck', function(req, res) {
     let game = GM.get(req.params.gameId)
     if (!game) return _errorResponse(res, 'bad game id')
@@ -152,31 +109,6 @@ app.post('/games/:gameId/start/:deck', function(req, res) {
         return _errorResponse(res, e)
     }
     _jsonResponse(res, { status: game.status })
-})
-
-app.post('/games/:gameId/end', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    game.end()
-    _jsonResponse(res, { status: game.status })
-})
-
-app.get('/games/:gameId/status', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    if (!game) return _errorResponse(res, 'bad game id')
-    _jsonResponse(res, game.json)
-})
-
-app.get('/games/:gameId/players/:id/startRole', function(req, res) {
-    let game = GM.get(req.params.gameId)
-    let id = req.params.id
-    if (!game) return _errorResponse(res, 'bad game id')
-    if (id == 'left' || id == 'center' || id == 'right') {
-        _jsonResponse(res, game.center[id])
-    }
-    let player = game.getPlayer(id)
-    if (!player) return _errorResponse(res, 'bad player')
-    _jsonResponse(res, player.startRole)
 })
 
 app.post('/games/:gameId/players/:playerId/vote/:votedId', function(req, res) {

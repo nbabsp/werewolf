@@ -8,7 +8,6 @@ import './components/BaseLobby'
 
 let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
-    findGameSource: (gameName, playerId) => StaticRequestor.eventSource(`/games/find/${gameName}/${playerId}`),
     getSessionP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}`),
     joinSessionP: (sessionId, playerId) => StaticRequestor.putP(`/sessions/${sessionId}/players/${playerId}`),
     activateP: (sessionId, playerId) => StaticRequestor.postP(`/sessions/${sessionId}/players/${playerId}/activate`),
@@ -33,7 +32,6 @@ let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject)
 })
 
 async function playP(sessionId, playerId) {
-    //let gameId = await joinGameP(sessionId, playerId)
     await PlayerRequestor.activateP(sessionId, playerId)
 
     let lobby = document.createElement('base-lobby')
@@ -102,6 +100,13 @@ async function mainP() {
     let sessionId = await findSessionP()
     let playerId = await registerPlayerP(sessionId)
     await PlayerRequestor.joinSessionP(sessionId, playerId)
+    if (process.env.ENV == 'debug') {
+        let player = await PlayerRequestor.registerP('AI-1')
+        await PlayerRequestor.joinSessionP(sessionId, player.id)
+        player = await PlayerRequestor.registerP('AI-2')
+        await PlayerRequestor.joinSessionP(sessionId, player.id)
+    }
+
     playP(sessionId, playerId)
 }
 
