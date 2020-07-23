@@ -26,6 +26,8 @@ class Game {
         this._roleObservers.lower = []
         this._descritionObservers = []
         this._endGameObservers = []
+        this._swapObservers = []
+        this._unswapObservers = []
     }
 
     set time(time) {
@@ -57,6 +59,14 @@ class Game {
         this._endGameObservers.forEach(callback => callback(endGame))
     }
 
+    swapAnimate(ids) {
+        this._swapObservers.forEach(callback => callback(ids))
+    }
+
+    swapDeanimate() {
+        this._unswapObservers.forEach(callback => callback())
+    }
+
     observeTimerStatus(callback) {
         this._timerStatusObservers.push(callback)
     }
@@ -85,8 +95,12 @@ class Game {
         this._timeObservers.push(callback)
     }
 
-    playersWithIds(ids) {
-        return this.players.filter((player) => ids.find(id => player.id == id))
+    observeSwapAnimate(callback) {
+        this._swapObservers.push(callback)
+    }
+
+    observeSwapDeanimate(callback) {
+        this._unswapObservers.push(callback)
     }
 }
 

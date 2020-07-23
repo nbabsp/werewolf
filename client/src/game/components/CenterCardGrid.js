@@ -4,6 +4,7 @@ import { LitElement, html, css} from 'lit-element'
 class CenterCardGrid extends LitElement {
     static get properties() {
         return {
+            num: { type: Number }
         }
     }
 
@@ -13,20 +14,24 @@ class CenterCardGrid extends LitElement {
             background-color: #444444;
             width: 100%;
             display: flex;
-            padding: 2%;
+            padding-left: 2%;
+            padding-right: 2%;
             box-sizing: border-box;
             justify-content: space-between;
         }
         .card {
             width: 30%;
             height: fit-content;
-            margin: 2%;
+            margin: 1.5%;
+            position: relative;
+            height: clamp(0px, 39.1vw, 169px);
         }
         `
     }
 
     constructor() {
         super()
+        this.num = null
     }
 
     exposeCard(id, role) {
@@ -46,9 +51,9 @@ class CenterCardGrid extends LitElement {
 
     render() {
         return html`
-            <div class='card'><base-card id=left @clicked=${ this.leftCardClicked }/></div>
-            <div class='card'><base-card id=center @clicked=${ this.centerCardClicked }/></div>
-            <div class='card'><base-card id=right @clicked=${ this.rightCardClicked }/></div>
+            <div class='card'><base-card id=left .num=${ this.num } @clicked=${ this.leftCardClicked }/></div>
+            <div class='card'><base-card id=center .num=${ this.num + 1 } @clicked=${ this.centerCardClicked }/></div>
+            <div class='card'><base-card id=right .num=${ this.num + 2 } @clicked=${ this.rightCardClicked }/></div>
         `
     }
 }

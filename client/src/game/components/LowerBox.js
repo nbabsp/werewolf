@@ -26,7 +26,7 @@ class LowerBox extends LitElement {
             flex-direction: column;
             position: relative;
             text-align: center;
-            width: 75%;
+            width: 68.5%;
             vertical-align: top;
             border-width: 1px;
             border-color: #000000;
@@ -38,7 +38,7 @@ class LowerBox extends LitElement {
             display: inline-block;
             height: 100%;
             max-height: 100%;
-            width: 30%;
+            width: 31.5%;
             padding: 1%;
             border-width: 1px;
             border-color: #000000;
@@ -46,10 +46,11 @@ class LowerBox extends LitElement {
             box-sizing: border-box;
         }
         .card {
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            position: relative;
+            height: MIN(39.3vw, 171px);
         }
         `
     }

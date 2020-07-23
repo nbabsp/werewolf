@@ -158,7 +158,6 @@ class GameHandler {
         this._game.setRole(this._player.id, 'myCard')
         await waitForStatusP(this._game.id, this._player.id, 'night')
         this._game.setTimerStatus('game')
-        await new Promise(resolve => this._startTimer(5, resolve)) // give players a chance to internalize their card
     }
 
     async nightPhaseP() {

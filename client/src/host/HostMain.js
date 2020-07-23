@@ -5,10 +5,10 @@ import './components/HostControls'
 let HostRequestor = {
     clearSessionsP: () => StaticRequestor.getP(`/sessions/clear`),
     createSessionP: () => StaticRequestor.postP(`/sessions/create`),
-    createP: (sessionId, deck) => StaticRequestor.postP(`/sessions/${sessionId}/game/`, {deck: deck}),
+    createP: (sessionId, deck) => StaticRequestor.postP(`/sessions/${sessionId}/game`, {deck: deck}),
     clearP: (sessionId) => StaticRequestor.deleteP(`/sessions/${sessionId}/game`),
     getPlayersP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}/players`),
-    voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
+    voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`)
 }
 
 async function hostGameP(sessionId) {
@@ -18,7 +18,9 @@ async function hostGameP(sessionId) {
 
     lobby.addEventListener('start', async () => {
         try {
+            console.log('create')
             let game = await HostRequestor.createP(sessionId, lobby.deck)
+            console.log('created')
             gameId = game.id
             lobby.hiddenRoles = true
             lobby.status = 'voting'

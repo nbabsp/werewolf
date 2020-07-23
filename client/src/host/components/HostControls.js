@@ -26,7 +26,8 @@ class HostControls extends LitElement {
         this.hiddenPlayers = true
         this.status = 'preGame'
         if (process.env.ENV == 'debug') {
-            this.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
+            //this.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
+            this.deck = ['troublemaker', 'troublemaker', 'drunk', 'drunk', 'robber', 'robber', 'robber']
             this.deckIds = ['werewolf1', 'werewolf2', 'seer', 'robber', 'troublemaker', 'villager1']
         }
     }

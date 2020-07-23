@@ -19,6 +19,7 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
 
         req.on('close', () => {
             console.log('closed from client', playerId)
+            console.log('session.status', session.status)
             session.removeListener(playerId)
         })
     })
@@ -28,10 +29,11 @@ let SessionRoutes = function(context, sessionDatabase, playerDatabase, gameDatab
     })
 
     context.app.get('/sessions/:sessionId', function(req, res) {
+        console.log('hi')
         context.sendJSON(res, sessionDatabase.get(req.params.sessionId))
     })
 
-    context.app.post('/sessions/:sessionId/game/', function(req, res) {
+    context.app.post('/sessions/:sessionId/game', function(req, res) {
         let session = sessionDatabase.get(req.params.sessionId)
         if (!session) return context.sendError(res, 'bad session id')
         let activePlayersIds = session.players.filter(player => player.active).map(player => player.id)

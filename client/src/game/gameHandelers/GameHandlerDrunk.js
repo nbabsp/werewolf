@@ -20,11 +20,7 @@ class GameHandlerDrunk extends GameHandler {
             this._exposeRole(this._player.id)
             let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
             await waitP(2)
-            let tempRole = this._player.role
-            this._player.role = this._game.center[id]
-            this._game.center[id] = tempRole
-            this._exposeRole(id)
-            this._hideRole(this._player.id)
+            this._game.swapAnimate(this._swapIds)
             GameMasterRequestor.drunkP(this._game.id, this._player.id, this._swapIds)
             await waitP(2)
             this._midClick = false
@@ -37,6 +33,7 @@ class GameHandlerDrunk extends GameHandler {
     async _endNightP() {
         this._swapIds.forEach(id => this._hideRole(id))
         this._hideRole(this._player.id)
+        this._game.swapDeanimate()
     }
 }
 
