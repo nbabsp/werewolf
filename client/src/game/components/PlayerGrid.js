@@ -4,7 +4,8 @@ import './BasePlayer'
 class PlayerGrid extends LitElement {
     static get properties() {
         return {
-            players: { type: Array }
+            players: { type: Array },
+            i: { type: Number }
         }
     }
 
@@ -23,6 +24,7 @@ class PlayerGrid extends LitElement {
     constructor() {
         super()
         this.players = []
+        this.i = -1
     }
 
     exposePlayer(id, role) {
@@ -46,7 +48,11 @@ class PlayerGrid extends LitElement {
 
     render() {
         return html`
-            <div>${this.players.map(player => html`<base-player id=${ player.id } .player=${ player } @clicked=${ this.playerClicked }/>`)}</div>
+            <div style='height:min(${ Math.ceil(this.players.length / 3) * 205 }px, ${48.1 * Math.ceil(this.players.length / 3)}vw)'>${this.players.map(player => {
+                    this.i += 1
+                    return html`<base-player id=${ player.id } .num=${ this.i } .player=${ player } @clicked=${ this.playerClicked }/>`
+                })
+            }</div>
         `
     }
 }

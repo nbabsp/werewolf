@@ -23,6 +23,7 @@ class SessionDatabase {
     }
 
     get(id) {
+        console.log('session:', this._sessions[id])
         return this._sessions[id]
     }
 

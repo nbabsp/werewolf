@@ -26,8 +26,6 @@ let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject)
     }
     source.onerror = (e) => {
         console.log('got an error', e)
-        source.close()
-        reject()
     }
 })
 
@@ -61,8 +59,11 @@ async function playP(sessionId, playerId) {
 }
 
 async function findSessionP() {
+    console.log('hi1')
     let sessionId = await InputPopover.getP('Input group name', 'JOIN GROUP')
+    console.log('hi2 sessionId:', sessionId)
     let session = await PlayerRequestor.getSessionP(sessionId)
+    console.log('hi3 session:', session)
     console.log('got session', session)
     while(!session) {
         ErrorPopup.post('Group not found')
@@ -75,6 +76,7 @@ async function findSessionP() {
 async function registerPlayerP(sessionId) {
     let repeat = true
     let name = null
+    console.log('repeat:', repeat)
     while(repeat) {
         name = await InputPopover.getP('Input your name', 'REGISTER')
         let session = await PlayerRequestor.getSessionP(sessionId)
@@ -96,7 +98,7 @@ async function mainP() {
         e.preventDefault()
         e.returnValue = ''
     })
-
+    console.log('hi0')
     let sessionId = await findSessionP()
     let playerId = await registerPlayerP(sessionId)
     await PlayerRequestor.joinSessionP(sessionId, playerId)

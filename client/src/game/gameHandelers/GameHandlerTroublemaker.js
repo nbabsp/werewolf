@@ -20,7 +20,10 @@ class GameHandlerTroublemaker extends GameHandler {
             this._selectedOneId = id
             this._game.setRole(id, 'selected')
             this._swapIds.push(id)
-            if (this._doneSelecting) GameMasterRequestor.troublemakerP(this._game.id, this._player.id, this._swapIds)
+            if (this._doneSelecting) {
+                GameMasterRequestor.troublemakerP(this._game.id, this._player.id, this._swapIds)
+                this._game.swapAnimate(this._swapIds)
+            }
         }
     }
 
@@ -30,6 +33,7 @@ class GameHandlerTroublemaker extends GameHandler {
     async _endNightP() {
         this._swapIds.forEach(id => this._hideRole(id))
         this._hideRole(this._player.id)
+        this._game.swapDeanimate()
     }
 }
 
