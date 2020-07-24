@@ -7,7 +7,6 @@ class GamePlayer {
         this.prepared = false
         this.votes = []
         this.nightActionComplete = false
-        this.voted = false
         this.votedId = null
     }
 
@@ -20,7 +19,6 @@ class GamePlayer {
             prepared: this.prepared,
             votes: this.votes,
             nightActionComplete: this.nightActionComplete,
-            voted: this.voted,
             votedId: this.votedId
         }
     }

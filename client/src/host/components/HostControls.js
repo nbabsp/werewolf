@@ -18,10 +18,6 @@ class HostControls extends LitElement {
 
     constructor() {
         super()
-        this.startCallback = null
-        this.voteCallback = null
-        this.restartCallback = null
-        this.endCallback = null
         this.name = ''
         this.deck = []
         this.deckIds = []
@@ -29,6 +25,11 @@ class HostControls extends LitElement {
         this.hiddenRoles = true
         this.hiddenPlayers = true
         this.status = 'preGame'
+        if (process.env.ENV == 'debug') {
+            //this.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
+            this.deck = ['troublemaker', 'troublemaker', 'drunk', 'drunk', 'robber', 'robber', 'robber']
+            this.deckIds = ['werewolf1', 'werewolf2', 'seer', 'robber', 'troublemaker', 'villager1']
+        }
     }
 
     static get styles() {
@@ -117,38 +118,18 @@ class HostControls extends LitElement {
     }
 
     handleStartClick(event) {
-        if (this.startCallback) this.startCallback()
+        this.dispatchEvent(new Event('start'))
     }
 
     handleVoteClick(event) {
-        if (this.voteCallback) this.voteCallback()
+        this.dispatchEvent(new Event('vote'))
     }
     
-    handleRestartClick(event) {
-        if (this.restartCallback) this.restartCallback()
-    }
-
     handleEndClick(event) {
-        if (this.endCallback) this.endCallback()
+        this.dispatchEvent(new Event('terminate'))
     }
 
     handleSelectionClick(event) {
-        let grid = this.shadowRoot.getElementById('selectedGrid')
-        if (this.deckIds.includes(event.detail.id)) {
-            let index = this.deckIds.indexOf(event.detail.id)
-            if (index !== -1) {
-                this.deckIds.splice(index, 1)
-                this.deck.splice(index, 1)
-                grid.selectedCard(event.detail.id, false)
-            }
-        } else {
-            this.deckIds.push(event.detail.id)
-            this.deck.push(event.detail.role)
-            grid.selectedCard(event.detail.id, true)
-        }
-    }
-
-    handleKickClick(event) {
         let grid = this.shadowRoot.getElementById('selectedGrid')
         if (this.deckIds.includes(event.detail.id)) {
             let index = this.deckIds.indexOf(event.detail.id)
@@ -188,9 +169,6 @@ class HostControls extends LitElement {
                 ` : this.status == 'voting' ? html`
                         <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
                         <div class='cornerButton' @click=${ this.handleVoteClick }>VOTE\nNOW</div>
-                ` : this.status == 'endGame' ? html`
-                        <div class='cornerButton2' @click=${ this.handleEndClick }>END\nGAME</div>
-                        <div class='cornerButton' @click=${ this.handleRestartClick }>NEW\nGAME</div>
                 ` : '' }
             </div>
         `

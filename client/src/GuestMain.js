@@ -8,66 +8,34 @@ import './components/BaseLobby'
 
 let PlayerRequestor = {
     registerP: (name) => StaticRequestor.postP('/players/register', {name: name}),
-    findGameSource: (gameName, playerId) => StaticRequestor.eventSource(`/games/find/${gameName}/${playerId}`),
-    statusSource: (playerId, gameId) => StaticRequestor.eventSource(`/games/${gameId}/status/${playerId}`),
-    getSessionP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}`)
+    getSessionP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}`),
+    joinSessionP: (sessionId, playerId) => StaticRequestor.putP(`/sessions/${sessionId}/players/${playerId}`),
+    activateP: (sessionId, playerId) => StaticRequestor.postP(`/sessions/${sessionId}/players/${playerId}/activate`),
+    statusSource: (sessionId, playerId) => StaticRequestor.eventSource(`/sessions/${sessionId}/status/${playerId}`)
 }
 
-let findGameP = (gameName, playerId) => new Promise((resolve, reject) => {
-    let source = PlayerRequestor.findGameSource(gameName, playerId)
+let waitInLobbyP = (lobby, playerId, sessionId) => new Promise((resolve, reject) => {
+    let source = PlayerRequestor.statusSource(sessionId, playerId)
     source.onmessage = (e) => {
-        console.log('got message', e, e.data)
-        console.log('closing', playerId)
-        source.close()
-        resolve(e.data)
-    }
-    source.onerror = (e) => {
-        console.log('got an error', e)
-        source.close()
-    }
-})
-
-async function joinGameP(gameName, playerId) {
-    let div = document.createElement('div')
-    div.appendChild(document.createTextNode('Waiting for host to restart game'))
-    div.style.textAlign = 'center'
-    div.style.margin = 'auto'
-    document.body.appendChild(div)
-    let gameId = await findGameP(gameName, playerId)
-    div.remove()
-    // inject two more players in debug environment
-    if (process.env.ENV == 'debug') {
-        let player = await PlayerRequestor.registerP('AI-1')
-        await findGameP(gameName, player.id)
-        player = await PlayerRequestor.registerP('AI-2')
-        await findGameP(gameName, player.id)
-    }
-    return gameId
-}
-
-let waitInLobbyP = (lobby, playerId, gameId) => new Promise((resolve, reject) => {
-    let source = PlayerRequestor.statusSource(playerId, gameId)
-    source.onmessage = (e) => {
-        let game = JSON.parse(e.data)
-        lobby.players = game.players
-        if (game.status != 'creating') {
+        let session = JSON.parse(e.data)
+        lobby.players = session.players
+        if (session.status != 'lobby') {
             source.close()
-            resolve(game)
+            resolve(session.gameId)
         }
     }
     source.onerror = (e) => {
         console.log('got an error', e)
-        source.close()
     }
 })
 
-async function playP(session, playerId) {
-    let gameId = await joinGameP(session.name, playerId)
+async function playP(sessionId, playerId) {
+    await PlayerRequestor.activateP(sessionId, playerId)
 
     let lobby = document.createElement('base-lobby')
-    lobby.name = session.name
+    lobby.name = sessionId
     document.body.appendChild(lobby)
-    await waitInLobbyP(lobby, playerId, gameId)
+    let gameId = await waitInLobbyP(lobby, playerId, sessionId)
     lobby.remove()
 
     let _clickObservers = []
@@ -87,23 +55,39 @@ async function playP(session, playerId) {
     let GM = new GameMaster(game, interaction)
     await GM.playP()
     main.element.remove()
-    playP(session, playerId)
+    playP(sessionId, playerId)
 }
 
 async function findSessionP() {
+    console.log('hi1')
     let sessionId = await InputPopover.getP('Input group name', 'JOIN GROUP')
+    console.log('hi2 sessionId:', sessionId)
     let session = await PlayerRequestor.getSessionP(sessionId)
+    console.log('hi3 session:', session)
     console.log('got session', session)
     while(!session) {
         ErrorPopup.post('Group not found')
         sessionId = await InputPopover.getP('Input group name', 'JOIN GROUP')
         session = await PlayerRequestor.getSessionP(sessionId)
     }
-    return session
+    return session.id
 }
 
-async function joinSessionP(session) {
-    let name = await InputPopover.getP('Input your name', 'REGISTER')
+async function registerPlayerP(sessionId) {
+    let repeat = true
+    let name = null
+    console.log('repeat:', repeat)
+    while(repeat) {
+        name = await InputPopover.getP('Input your name', 'REGISTER')
+        let session = await PlayerRequestor.getSessionP(sessionId)
+        repeat = false
+        session.players.forEach(player => {
+            if (player.name == name) {
+                repeat = true
+                ErrorPopup.post('Name unavailable')
+            }
+        })
+    }
     let player = await PlayerRequestor.registerP(name)
     console.log('got player', player)
     return player.id
@@ -114,10 +98,18 @@ async function mainP() {
         e.preventDefault()
         e.returnValue = ''
     })
+    console.log('hi0')
+    let sessionId = await findSessionP()
+    let playerId = await registerPlayerP(sessionId)
+    await PlayerRequestor.joinSessionP(sessionId, playerId)
+    if (process.env.ENV == 'debug') {
+        let player = await PlayerRequestor.registerP('AI-1')
+        await PlayerRequestor.joinSessionP(sessionId, player.id)
+        player = await PlayerRequestor.registerP('AI-2')
+        await PlayerRequestor.joinSessionP(sessionId, player.id)
+    }
 
-    let session = await findSessionP()
-    let playerId = await joinSessionP(session)
-    playP(session, playerId)
+    playP(sessionId, playerId)
 }
 
 export default mainP

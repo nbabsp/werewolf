@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const Session = require('./Session')
 
 let generateId = () => crypto.randomBytes(2).toString('hex')
 
@@ -15,14 +16,14 @@ class SessionDatabase {
         while (this._sessions[id]) {
             id = generateId()
         }
-        this._sessions[id] = {
-            id: id,
-            name: id
-        }
+
+        this._sessions[id] = new Session(id)
+
         return this._sessions[id]
     }
 
     get(id) {
+        console.log('session:', this._sessions[id])
         return this._sessions[id]
     }
 

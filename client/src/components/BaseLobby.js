@@ -41,8 +41,12 @@ class BaseLobby extends LitElement {
     }
 
     set players(players) {
+        let playerList = {}
+        players.forEach(player => {
+            playerList[player.name] = player.active
+        })
         let nameList = this.shadowRoot.getElementById('lobby-names')
-        if (nameList) nameList.names = players.map(player => player.name)
+        if (nameList) nameList.playerList = playerList
     }
 
     render() {
