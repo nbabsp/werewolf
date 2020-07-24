@@ -56,17 +56,9 @@ class CardGrid extends LitElement {
 
     render() {
         return html`
-            <div class='grid'>${this.cards.map( role => {
-                if (this.cards.length <= 6) {
-                    return html`<div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png'); `}></div>`
-                } else {
-                    (this.count > Math.ceil(this.cards.length * 0.5)) ? this.count = -1 : this.count += 1
-                    return html`
-                        <div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png');`}></div>
-                        <div class=${(this.count > Math.ceil(this.cards.length * 0.5)) ? 'break' : 'invisible'}></div>
-                    `
-                }
-            })}</div>
+            <div class='grid'>
+                ${this.cards.map( role => html`<div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png'); `}`)}></div>
+            </div>
         `
     }
 }

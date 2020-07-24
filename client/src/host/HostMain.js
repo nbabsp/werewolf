@@ -5,60 +5,41 @@ import './components/HostControls'
 let HostRequestor = {
     clearSessionsP: () => StaticRequestor.getP(`/sessions/clear`),
     createSessionP: () => StaticRequestor.postP(`/sessions/create`),
-    createP: (sessionId) => StaticRequestor.postP(`/sessions/${sessionId}/game`),
+    createP: (sessionId, deck) => StaticRequestor.postP(`/sessions/${sessionId}/game`, {deck: deck}),
     clearP: (sessionId) => StaticRequestor.deleteP(`/sessions/${sessionId}/game`),
-    startP: (gameId, deck) => StaticRequestor.postP(`/games/${gameId}/start/${JSON.stringify(deck)}`),
-    voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`),
+    getPlayersP: (sessionId) => StaticRequestor.getP(`/sessions/${sessionId}/players`),
+    voteNowP: (gameId) => StaticRequestor.getP(`/games/${gameId}/voteNow`)
 }
 
-async function hostGameP(session, gameId, deck, deckIds) {
-    console.log('hosting game:', gameId)
+async function hostGameP(sessionId) {
+    let gameId = null
     let lobby = document.createElement('host-controls')
-    lobby.name = session.name
-    lobby.deck = deck
-    lobby.deckIds = deckIds
-    if (process.env.ENV == 'debug') {
-        lobby.deck = ['werewolf', 'werewolf', 'seer', 'robber', 'troublemaker', 'villager']
-        lobby.deckIds = ['werewolf1', 'werewolf2', 'seer', 'robber', 'troublemaker', 'villager1']
-    }
+    lobby.name = sessionId
 
-    lobby.names = ['John', 'Smith', 'Fred']
-    lobby.startCallback = async () => {
+    lobby.addEventListener('start', async () => {
         try {
-            await HostRequestor.startP(gameId, lobby.deck)
+            console.log('create')
+            let game = await HostRequestor.createP(sessionId, lobby.deck)
+            console.log('created')
+            gameId = game.id
             lobby.hiddenRoles = true
             lobby.status = 'voting'
-            console.log('Starting Game', gameId)
-        } catch (e) {
-            ErrorPopup.post(e.error.err)
-            console.log('Error: ', e)
-        }
-    }
-    lobby.voteCallback = async () => {
-        try {
-            await HostRequestor.voteNowP(gameId)
-            lobby.status = 'endGame'
         } catch (e) {
             console.log('Error: ', e)
+            if(e.error.err) ErrorPopup.post(e.error.err)
         }
-    }
-    lobby.restartCallback = async () => {
-        try {
-            lobby.remove()
-            await HostRequestor.clearP(session.id)
-            let game = await HostRequestor.createP(session.id)
-            return (await hostGameP(session, game.id, lobby.deck, lobby.deckIds))
-        } catch (e) {
-            console.log('Error: ', e)
-        }
-    }
-    lobby.endCallback = async () => {
-        try {
-            await HostRequestor.clearP(session.id)
-        } catch (e) {
-            console.log('Error: ', e)
-        }
-    }
+    })
+
+    lobby.addEventListener('vote', async () => {
+        await HostRequestor.voteNowP(gameId)
+        await HostRequestor.clearP(sessionId)
+        lobby.status = 'preGame'
+    })
+
+    lobby.addEventListener('terminate', async () => {
+        await HostRequestor.clearP(sessionId)
+    })
+
     document.body.appendChild(lobby)
 }
 
@@ -66,9 +47,7 @@ async function mainP() {
     await HostRequestor.clearSessionsP() // clean up the sessions before we start
     let session = await HostRequestor.createSessionP()
     console.log('created session', session)
-    let game = await HostRequestor.createP(session.id)
-    console.log('initial game', game)
-    return await hostGameP(session, game.id, [], [])
+    return await hostGameP(session.id)
 }
 
 export default mainP

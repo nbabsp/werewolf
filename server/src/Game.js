@@ -14,18 +14,19 @@ let shuffle = inputArray => {
 }
 
 class Game {
-    constructor(name) {
+    constructor(name, players) {
         this.id = generateId()
         this.name = name
         this.players = []
+        this._handlers = {}
         this.status = 'creating'
         this.cards = []
         this.roles = {}
         this.center = {}
-        this._handlers = {}
         this.robberSwapIds = []
         this.troublemakerSwapIds = []
         this.drunkSwapIds = []
+        players.forEach(player => this.join(player))
     }
 
     get json() {
@@ -63,13 +64,7 @@ class Game {
     }
 
     join(player) {
-        if (this.players.find((current) => current.id == player.id)) {
-            console.log('player already in game')
-            return // accept the double-join
-        }
         this.players.push(new GamePlayer(player))
-
-        // notify handlers that we have a new player
         Object.values(this._handlers).forEach(callback => callback(this))
     }
 
@@ -78,6 +73,7 @@ class Game {
     }
 
     start(deck) {
+        console.log('starting:', deck)
         if (this.players.length < 3) throw 'Not enough players'
         if (deck.length != (this.players.length + 3)) throw 'Wrong number of cards'
         this.deal(deck)
@@ -85,13 +81,9 @@ class Game {
     }
 
     deal(deck) {
-        if (!deck) {
-            console.log('bad number of players')
-            return
-        }
         this.cards = deck
         let shuffledDeck = shuffle(deck)
-        console.log(shuffledDeck)
+        console.log('deck:', shuffledDeck)
         for(let len = this.players.length, i = 0; i < len; i++) {
             this.roles[this.players[i].id] = shuffledDeck[i]
             this.players[i].startRole = shuffledDeck[i]
@@ -131,10 +123,6 @@ class Game {
             this.center[this.drunkSwapIds[1]] = tempRole
         }
         this.updateStatus('day')
-    }
-
-    vote() {
-        this.updateStatus('voted')
     }
 
     robberNightAction(swapIds) {
@@ -177,17 +165,8 @@ class Game {
         console.log('VOTED', votedId)
         if (!votedPlayer) return false
         votedPlayer.votes.push(player.name)
-        player.voted = true
         player.votedId = votedId
-        if (this.players.filter(player => player.voted).length == this.players.length) {
-            this.vote()
-        }
         return true
-
-    }
-
-    end() {
-        this.status = 'done'
     }
 }
 

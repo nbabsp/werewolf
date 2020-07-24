@@ -25,8 +25,8 @@ class GameDatabase {
         return this._games.find(game => game.id == id)
     }
 
-    create(name) {
-        let game = new Game(name)
+    create(name, players) {
+        let game = new Game(name, players)
         this._games.push(game)
         console.log('After create:', this._games)
 

@@ -11,7 +11,8 @@ class PlayerDatabase {
         let id = generateId()
         this._players[id] = {
             id: id,
-            name: name
+            name: name,
+            active: true
         }
         return this._players[id]
     }
