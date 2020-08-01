@@ -21,7 +21,7 @@ class GameView {
         game.observeRole('left', role => this.centerCardGrid.exposeCard('left', role))
         game.observeRole('center', role => this.centerCardGrid.exposeCard('center', role))
         game.observeRole('right', role => this.centerCardGrid.exposeCard('right', role))
-        this.centerCardGrid.num = this.playerGrid.players.length + 3 - this.playerGrid.players.length % 3
+        this.centerCardGrid.num = this.playerGrid.players.length - this.playerGrid.players.length % 3 + (this.playerGrid.players.length % 3 == 0) ? 3 : 0
 
         this.lowerBox = document.createElement('lower-box')
         this.lowerBox.addEventListener('clicked',  event => interaction.onClick(event.detail))
