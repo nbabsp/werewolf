@@ -164,6 +164,11 @@ class Game {
         let votedPlayer = this.getPlayer(votedId)
         console.log('VOTED', votedId)
         if (!votedPlayer) return false
+        this.players.forEach(p => {
+            if(p.votes.includes(player.name)) {
+                p.votes = p.votes.filter(name => name != player.name)
+            }
+        })
         votedPlayer.votes.push(player.name)
         player.votedId = votedId
         return true
