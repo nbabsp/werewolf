@@ -1,7 +1,7 @@
+import './components/InfoBar'
+import './components/CardGrid'
 import './components/PlayerGrid'
 import './components/CenterCardGrid'
-import './components/LowerBox'
-import './components/CardGrid'
 import './GameView.css'
 
 class GameView {
@@ -9,6 +9,15 @@ class GameView {
         let main = document.createElement('div')
         main.className = 'main'
         
+        this.infoBar = document.createElement('info-bar')
+        this.infoBar.addEventListener('clicked',  event => interaction.onClick(event.detail))
+        game.observeTimerStatus(status => this.infoBar.changeStatus(status))
+        this.infoBar.role = game.player.startRole
+
+        this.cardGrid = document.createElement('card-grid')
+        this.cardGrid.cards = game.cards
+        this.cardGrid.role = game.player.startRole
+
         this.playerGrid = document.createElement('player-grid')
         this.playerGrid.players = game.players
         this.playerGrid.addEventListener('clicked', event => interaction.onClick(event.detail))
@@ -23,23 +32,15 @@ class GameView {
         game.observeRole('right', role => this.centerCardGrid.exposeCard('right', role))
         this.centerCardGrid.num = this.playerGrid.players.length - this.playerGrid.players.length % 3 + (this.playerGrid.players.length % 3 == 0) ? 3 : 0
 
-        this.lowerBox = document.createElement('lower-box')
-        this.lowerBox.addEventListener('clicked',  event => interaction.onClick(event.detail))
-        game.observeTimerStatus(status => this.lowerBox.changeTimerStatus(status))
-        this.lowerBox.role = game.player.startRole
-
-        this.cardGrid = document.createElement('card-grid')
-        this.cardGrid.cards = game.cards
-
+        main.appendChild(this.infoBar)
+        main.appendChild(this.cardGrid)
         main.appendChild(this.playerGrid)
         main.appendChild(this.centerCardGrid)
-        main.appendChild(this.lowerBox)
-        main.appendChild(this.cardGrid)
         this.element = main
 
-        game.observeTime((time) => this.lowerBox.time = time)
-        game.observeRole('lower', role => this.lowerBox.exposeCard(role))
-        game.observeDescription(role => this.lowerBox.changeDescription(role))
+        game.observeTime((time) => this.infoBar.time = time)
+        game.observeDescription(role => this.infoBar.changeDescription(role))
+        game.observeClearHighlight(() => this.cardGrid.clearHilight())
         game.observeSwapAnimate(ids => this.swap(ids))
         game.observeSwapDeanimate(() => this.unswap())
     }

@@ -28,6 +28,7 @@ class Game {
         this._endGameObservers = []
         this._swapObservers = []
         this._unswapObservers = []
+        this._clearHighlightObservers = []
     }
 
     set time(time) {
@@ -67,6 +68,10 @@ class Game {
         this._unswapObservers.forEach(callback => callback())
     }
 
+    clearHighlight() {
+        this._clearHighlightObservers.forEach(callback => callback())
+    }
+
     observeTimerStatus(callback) {
         this._timerStatusObservers.push(callback)
     }
@@ -102,6 +107,11 @@ class Game {
     observeSwapDeanimate(callback) {
         this._unswapObservers.push(callback)
     }
+
+    observeClearHighlight(callback) {
+        this._clearHighlightObservers.push(callback)
+    }
+
 }
 
 let GameFactory = {

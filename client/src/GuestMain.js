@@ -4,6 +4,7 @@ import ErrorPopup from './common/ErrorPopup'
 import GameFactory from './game/GameFactory'
 import GameMaster from './game/GameMaster'
 import GameView from './game/GameView'
+import './components/SessionControls'
 import './components/BaseLobby'
 
 let PlayerRequestor = {
@@ -49,13 +50,22 @@ async function playP(sessionId, playerId) {
     }
     let game = await GameFactory.createP(gameId, playerId)
 
+    let sessionControls = document.createElement('session-controls')
+    sessionControls.name = sessionId
+    document.body.appendChild(sessionControls)
+
     let main = new GameView(game, interaction)
     document.body.appendChild(main.element)
+    
+    sessionControls.addEventListener('reset', async () => {
+        main.element.remove()
+        sessionControls.remove()
+        playP(sessionId, playerId)
+    })
 
     let GM = new GameMaster(game, interaction)
     await GM.playP()
-    main.element.remove()
-    playP(sessionId, playerId)
+    sessionControls.status = 'done'
 }
 
 async function findSessionP() {

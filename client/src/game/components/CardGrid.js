@@ -5,7 +5,8 @@ class CardGrid extends LitElement {
     static get properties() {
         return {
             cards: { type: Array },
-            count: { type: Number }
+            role: { type: String },
+            highlighted: { type: Boolean }
         }
     }
 
@@ -15,7 +16,6 @@ class CardGrid extends LitElement {
         .token {
             position: relative;
             display: inline-block;
-            cursor: pointer;
             margin: 5px;
             height: 50px;
             width: 50px;
@@ -24,7 +24,6 @@ class CardGrid extends LitElement {
             background-repeat: none;
             background-size: cover;
             box-shadow: 0px 0px 4px 3px #222222
-            
         }
 
         .grid {
@@ -36,15 +35,6 @@ class CardGrid extends LitElement {
             border-width: 2px;
             border-color: #aa4444;
         }
-
-        .break {
-            flex-basis: 100%;
-            height: 0px;
-        }
-
-        .invisible {
-            display: none;
-        }
         `
     }
 
@@ -52,22 +42,26 @@ class CardGrid extends LitElement {
         super()
         this.cards = []
         this.count = 0
+        this.role = null
+        this.highlighted = false
+    }
+
+    clearHilight() {
+        let grid = this.shadowRoot.getElementById('grid')
+        if(!grid) return
+        let nodes = grid.childNodes
+        for(let i=0; i < nodes.length; i++) {
+            if (nodes[i].nodeName.toLowerCase() == 'div') {
+                nodes[i].style.boxShadow = '0px 0px 4px 3px #222222'
+            }
+        }
     }
 
     render() {
         return html`
-            <div class='grid'>${this.cards.map( role => {
-                let rows = Math.ceil(this.cards.length / 6)
-                let rowlength = Math.ceil(this.cards.length / rows)
-                if (this.count <= rowlength) {
-                    return html`<div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png'); `}></div>`
-                } else {
-                    return html`
-                        <div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png');`}></div>
-                        <div class=break></div>
-                    `
-                }
-            })}</div>
+        <div id='grid' class='grid'>${this.cards.map( role => {
+            return html`<div class='token' style=${ `background-image: url('${ StaticRequestor.basePath }/WerewolfImages/Werewolf/${ role }.png');box-shadow: 0px 0px 4px 3px ${ !this.highlighted && (role == this.role) ? '#55FF55;' : '#222222;'}${role == this.role ? this.highlighted = true : ''}`}></div>`
+        })}</div>
         `
     }
 }

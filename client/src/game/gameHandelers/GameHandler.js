@@ -155,9 +155,10 @@ class GameHandler {
         let waitP = (sec) => new Promise(resolve => setTimeout(resolve, sec*1000))
         await waitP(0.5)
         this._status = 'prepare'
-        this._game.setRole(this._player.id, 'myCard')
+        this._game.setRole(this._player.id, this._player.role)
         await waitForStatusP(this._game.id, this._player.id, 'night')
         this._game.setTimerStatus('game')
+        this._game.setRole(this._player.id, 'myCard')
     }
 
     async nightPhaseP() {
@@ -174,6 +175,7 @@ class GameHandler {
         let game = await waitForStatusP(this._game.id, this._player.id, 'day')
         this._updateBoard(game)
         await this._endNightP()
+        this._game.clearHighlight()
     }
 
     async discussionPhaseP() {
@@ -197,7 +199,7 @@ class GameHandler {
         this._game.setTimerStatus('rejoining')
         this._status = 'endGame'
         console.log('endGame!')
-        await this._completeDeferred.promise
+        // await this._completeDeferred.promise
     }
 
     async playP() {        
