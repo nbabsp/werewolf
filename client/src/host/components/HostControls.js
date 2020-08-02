@@ -36,7 +36,7 @@ class HostControls extends LitElement {
         return css`
             .topBar {
                 overflow: auto;
-                position: absolute;
+                position: relative;
                 display: flex;
                 flex-wrap: wrap;
                 top: 0;
